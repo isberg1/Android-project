@@ -28,3 +28,5 @@ If traffic rapports cannot be extracted though google maps API. We will need to 
 For configuring the GUI, we may try to use interchangeable fragment. 
 
 For the most advanced feature (detect pedestrians) we will use the phones camera app combined with the OpenCV library. A possible way to solve this is that we try to use the phones GPS/google maps API to determine the cars current position, its direction and speed. And combine this data with data form the camera to determine if the car is about to collide with something. For camera/OpenCV picture analysis, we may start by tying to identify the silhouettes of people. 
+
+![alt text](https://github.com/isberg1/Android-project/blob/master/Activity_design_Idea.png "")
