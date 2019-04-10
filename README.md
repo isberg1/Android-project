@@ -3,25 +3,32 @@
 ## Idea
 Android driving assistant. 
 
-At its most basic it is able to 
-*	display current driving speed
-*	display the speed limit
-*	display right of way
-*	display street name
-*	automatic day/night mode
+At its most basic the app is able to:    
+*	Display current driving speed
+*	Display the speed limit
+*	Display right of way
+*	Display street name
+*	Automatic switch between day/night mode
+* Register and login with facebook, google, etc
 
 
-at a more advanced level, it is able to
-*	display traffic reports (snow, accidents)
-*	driving statistics
-*	configurable GUI (what elements are displayed + their size + themes)
+At a more advanced level, the app is able to:    
+*	Display traffic reports (snow, accidents)
+*	Configurable GUI (what elements are displayed + their size + themes)
+*	Driving statistics
+* Find car after it has been parked
 
-
-the most advanced feature is the ability to detect pedestrians at risk of being hit by the car and to notify the driver before an accident occurs.
+The most advanced feature is the ability to detect pedestrians at risk of being hit by the car and to notify the driver before an accident occurs.
  
 
 ## Technical implementation 
 For many of the basic features it may be possible to run google maps in the background and extract data tough its API. 
+
+Statistics can be saved in firebase. Statistics can be saved for:    
+ * How long the trip lasted (hours, mins).
+ * Average and max speed.
+ * Km's travelled.
+ * Calculate how "agressive" or "passive" the driver is (advanced feature).
 
 If traffic rapports cannot be extracted though google maps API. We will need to crate our own backend REST API and database with dummy data. 
 
