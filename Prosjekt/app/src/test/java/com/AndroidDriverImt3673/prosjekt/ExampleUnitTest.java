@@ -1,4 +1,4 @@
-package com.example.prosjekt;
+package com.AndroidDriverImt3673.prosjekt;
 
 import org.junit.Test;
 

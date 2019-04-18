@@ -1,4 +1,4 @@
-package com.example.prosjekt;
+package com.AndroidDriverImt3673.prosjekt;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
