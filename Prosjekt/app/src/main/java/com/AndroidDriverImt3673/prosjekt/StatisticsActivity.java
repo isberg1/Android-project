@@ -1,21 +1,21 @@
 package com.AndroidDriverImt3673.prosjekt;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -26,19 +26,17 @@ import static java.lang.String.valueOf;
 // ToDo: Remove this:
 // Firebase Auth Tutorial: https://www.youtube.com/watch?v=EO-_vwfVi7c
 
-// ToDo: Only show 'Sign in' if user is not already signed into the app.
-// ToDo: Check that the signed in user is persistent.
-// ToDo: Add "Greetings" text over 'Sign in' boxes.
-// ToDo: Each user must have a unique identifier to be used when writing and retrieving data.
 // ToDo: Create statistics for the app.
 // ToDo: Create a web-app to show the same statistics.
 
 public class StatisticsActivity extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 7117;                    // Request number used as reference (Can be any number).
-    List<AuthUI.IdpConfig> providers;
+    List<AuthUI.IdpConfig> providers;                                   // List of sign in providers.
     TextView txtUserName;
     Button signOutBtn;
-    Button testDb;
+    Button testInsertDB;
+    Button testRetrieveDB;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +44,10 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
         txtUserName = findViewById(R.id.txtView_username);              // TextView to display username.
         signOutBtn = findViewById(R.id.btn_signOut);                    // Button to sign out.
-        testDb = findViewById(R.id.btn_db);
+        testInsertDB = findViewById(R.id.btn_insertDB);                 // ToDo: Remove DB Testing buttons.
+        testRetrieveDB = findViewById(R.id.btn_retrieveDB);
 
         providers = Arrays.asList(                                      // Initiates supported sign-in providers.
-                //new AuthUI.IdpConfig.AnonymousBuilder().build(),        // Anonymous sign in.
                 new AuthUI.IdpConfig.FacebookBuilder().build(),         // Facebook sign in.
                 new AuthUI.IdpConfig.GoogleBuilder().build()            // Google sign in.
         );
@@ -62,60 +60,71 @@ public class StatisticsActivity extends AppCompatActivity {
             updateActivityUI();                                         //   Calls function to update the rest of the UI.
         }
 
-        // Sing out button listener.
+        // Button to sign out.
         signOutBtn.setOnClickListener(v -> {
+            // Creates an listener for failures to sign out.
             AuthUI.getInstance()                                        // Signs the user out of the app.
                     .signOut(StatisticsActivity.this)
                     .addOnCompleteListener(task -> {
                         signOutBtn.setEnabled(false);                   // Disables the "sign-out" button.
-                        Toast.makeText(this, "Successfully signed out", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,
+                                "Successfully signed out",
+                                Toast.LENGTH_SHORT).show();
                         finish();                                       // Exit to MainActivity.
-                    }).addOnFailureListener(new OnFailureListener() {   // Creates an listener for failures to sign out.
+                    }).addOnFailureListener(e ->
+                        Toast.makeText(StatisticsActivity.this,  // Display message if error in logout.
+                            "Error: in onFailure for sign out " +
+                                    e.getMessage(), Toast.LENGTH_SHORT).show());
+        });
+
+        // Button to test insertion of data to the DB.
+        testInsertDB.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            // Create a new trip object.
+            Trip trip = new Trip(user.getUid());
+
+            // Set the date for the trip.
+            String datePattern = "dd-MM-yyyy";
+            SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
+            String date = dateFormat.format(new Date());
+            trip.setDate(date);
+
+            // Start time as unix time.
+            long unixTime = System.currentTimeMillis() / 1000L;
+            trip.setStartTime(unixTime);
+
+            // End time as unix time (+ 1 hour).
+            long tempEndTime = unixTime + 7200L;
+            trip.setEndTime(tempEndTime);
+
+            // Distance travelled.
+            trip.setKMsTravelled(100);
+
+            // Average speed.
+            trip.setAverageSpeed(60);
+
+            // Set the total time in seconds.
+            trip.setTotalTime(trip.getEndTime() - trip.getStartTime());
+
+            // Save to DB.
+            trip.saveTripToDB();
+        });
+
+        // Button to test retrieval of data from DB.
+        testRetrieveDB.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            // Retrieve data from DB.
+            Trip trip = new Trip(user.getUid());
+            trip.retrieveAllTripsFromDB(user.getUid(), new OnGetDataFromDBListener() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(StatisticsActivity.this,           // Display message if error in logout.
-                            "Error: in onFailure for sign out " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                public void onSuccess(ArrayList<Trip> tripList) {
+                    Log.d("FirestoreData", "onSuccess list: " + tripList);
+                    // ToDo: Call functions to work on the data.
                 }
             });
         });
-
-        // ToDo: Remove this temp object.
-        // Create som fake data.
-        // Creates a trip to be saved to the database.
-        testDb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // Gets the date.
-                String datePattern = "dd-MM-yyyy";
-                SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
-                String date = dateFormat.format(new Date());
-
-                // Create a new trip object.
-                Trip trip = new Trip(date);
-
-                // Start time as unix time.
-                long unixTime = System.currentTimeMillis() / 1000L;
-                trip.setStartTime(unixTime);
-
-                // End time as unix time (+ 1 hour).
-                long tempEndTime = unixTime + 7200L;
-                trip.setEndTime(tempEndTime);
-
-                // Distance travelled.
-                trip.setKMsTravelled(100);
-
-                // Average speed.
-                trip.setAverageSpeed(60);
-
-                // Set the total time in seconds.
-                trip.setTotalTime(trip.getEndTime() - trip.getStartTime());
-
-                // Save to DB.
-                trip.saveToDB();
-            }
-        });
-
     }
 
     // Shows the sign in providers and allow user to sign into app.
@@ -151,17 +160,15 @@ public class StatisticsActivity extends AppCompatActivity {
         String userName;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Gets the username.
-        if (user.getDisplayName() == null) {
+        if (user.getDisplayName() == null) {                        // Gets the username.
             userName = "Anonymous user";
         } else {
             userName = user.getDisplayName();
         }
 
-        // Show username in activity.
-        txtUserName.setText("Signed in as " + userName);
-
-        // Enables the "sign out" button.
-        signOutBtn.setEnabled(true);
+        txtUserName.setText("Signed in as " + userName);            // Show username in activity.
+        signOutBtn.setEnabled(true);                                // Enables the "sign out" button.
     }
+
+    // ToDo: Add functions to create graphs for statistics.
 }
