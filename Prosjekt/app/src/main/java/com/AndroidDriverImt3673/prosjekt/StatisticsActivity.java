@@ -5,32 +5,20 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.lang.String.valueOf;
 
@@ -38,8 +26,14 @@ import static java.lang.String.valueOf;
 // ToDo: Remove this:
 // Firebase Auth Tutorial: https://www.youtube.com/watch?v=EO-_vwfVi7c
 
-public class LoginActivity extends AppCompatActivity {
+// ToDo: Only show 'Sign in' if user is not already signed into the app.
+// ToDo: Check that the signed in user is persistent.
+// ToDo: Add "Greetings" text over 'Sign in' boxes.
+// ToDo: Each user must have a unique identifier to be used when writing and retrieving data.
+// ToDo: Create statistics for the app.
+// ToDo: Create a web-app to show the same statistics.
 
+public class StatisticsActivity extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 7117;                    // Request number used as reference (Can be any number).
     List<AuthUI.IdpConfig> providers;
     TextView txtUserName;
@@ -49,35 +43,44 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_statistics);
         txtUserName = findViewById(R.id.txtView_username);              // TextView to display username.
         signOutBtn = findViewById(R.id.btn_signOut);                    // Button to sign out.
         testDb = findViewById(R.id.btn_db);
 
         providers = Arrays.asList(                                      // Initiates supported sign-in providers.
-                //new AuthUI.IdpConfig.AnonymousBuilder().build(),        // Anonymous builder.
-                new AuthUI.IdpConfig.FacebookBuilder().build(),         // Facebook builder.
-                new AuthUI.IdpConfig.GoogleBuilder().build()            // Google builder.
+                //new AuthUI.IdpConfig.AnonymousBuilder().build(),        // Anonymous sign in.
+                new AuthUI.IdpConfig.FacebookBuilder().build(),         // Facebook sign in.
+                new AuthUI.IdpConfig.GoogleBuilder().build()            // Google sign in.
         );
 
-        showSignInOptions();                                            // Calls func to show the different sign-in options.
+        // Signs in user if not already signed in.
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {                            // If user is not signed in:
+            showSignInOptions();                                        //   Calls func to allow user to sign in.
+        } else {                                                        // If user is already signed in:
+            updateActivityUI();                                         //   Calls function to update the rest of the UI.
+        }
 
-        signOutBtn.setOnClickListener(v -> {                            // Listener for "sign-out" button.
+        // Sing out button listener.
+        signOutBtn.setOnClickListener(v -> {
             AuthUI.getInstance()                                        // Signs the user out of the app.
-                    .signOut(LoginActivity.this)
+                    .signOut(StatisticsActivity.this)
                     .addOnCompleteListener(task -> {
                         signOutBtn.setEnabled(false);                   // Disables the "sign-out" button.
-                        showSignInOptions();                            // Calls func to Show the sign-in options again.
+                        Toast.makeText(this, "Successfully signed out", Toast.LENGTH_SHORT).show();
+                        finish();                                       // Exit to MainActivity.
                     }).addOnFailureListener(new OnFailureListener() {   // Creates an listener for failures to sign out.
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(LoginActivity.this,           // Display message if error in logout.
+                    Toast.makeText(StatisticsActivity.this,           // Display message if error in logout.
                             "Error: in onFailure for sign out " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         });
 
         // ToDo: Remove this temp object.
+        // Create som fake data.
         // Creates a trip to be saved to the database.
         testDb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,14 +113,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Save to DB.
                 trip.saveToDB();
-
             }
         });
 
     }
 
+    // Shows the sign in providers and allow user to sign into app.
     private void showSignInOptions() {
-        startActivityForResult(
+        startActivityForResult(                                     // Starts the FirebaseUI activity.
                 AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .setIsSmartLockEnabled(false)
@@ -127,33 +130,38 @@ public class LoginActivity extends AppCompatActivity {
         );
     }
 
+    // Function gets called when user authenticates for the first time.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == MY_REQUEST_CODE) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
-                String userName;
-
-                // Get user.
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-                // Gets the username.
-                if (user.getDisplayName() == null) {
-                    userName = "Anonymous user";
-                } else {
-                    userName = user.getDisplayName();
-                }
-
-                // Show username in activity.
-                txtUserName.setText("Signed in as " + userName);
-
-                // Enables the "sign out" button.
-                signOutBtn.setEnabled(true);
+                Toast.makeText(this, "Successfully signed in", Toast.LENGTH_SHORT).show();
+                updateActivityUI();                                 // Calls function to update the rest of the UI.
             } else {
                 Toast.makeText(this, "Error response: "
                         + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    // Updates the StatisticsActivity view.
+    public void updateActivityUI() {
+        String userName;
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Gets the username.
+        if (user.getDisplayName() == null) {
+            userName = "Anonymous user";
+        } else {
+            userName = user.getDisplayName();
+        }
+
+        // Show username in activity.
+        txtUserName.setText("Signed in as " + userName);
+
+        // Enables the "sign out" button.
+        signOutBtn.setEnabled(true);
     }
 }
