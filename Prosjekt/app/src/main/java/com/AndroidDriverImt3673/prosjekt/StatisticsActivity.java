@@ -1,6 +1,7 @@
 package com.AndroidDriverImt3673.prosjekt;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,9 +12,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,7 +88,8 @@ public class StatisticsActivity extends AppCompatActivity {
                     }).addOnFailureListener(e ->
                         Toast.makeText(StatisticsActivity.this,  // Display message if error in logout.
                             "Error: in onFailure for sign out " +
-                                    e.getMessage(), Toast.LENGTH_SHORT).show());
+                                e.getMessage(),
+                                Toast.LENGTH_SHORT).show());
         });
 
         // Button to test insertion of data to the DB.
@@ -121,7 +136,46 @@ public class StatisticsActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(ArrayList<Trip> tripList) {
                     Log.d("FirestoreData", "onSuccess list: " + tripList);
+
                     // ToDo: Call functions to work on the data.
+
+
+
+                    LineChart mChart;
+                    mChart = findViewById(R.id.line_graph);
+
+
+                    mChart.setDragEnabled(true);
+                    mChart.setScaleEnabled(false);
+
+
+                    ArrayList<Entry> yValues = new ArrayList<>();
+
+                    yValues.add(new Entry(0, 60));
+                    yValues.add(new Entry(1, 50));
+                    yValues.add(new Entry(2, 70));
+                    yValues.add(new Entry(3, 30));
+                    yValues.add(new Entry(4, 50));
+                    yValues.add(new Entry(5, 60));
+                    yValues.add(new Entry(6, 65));
+
+                    LineDataSet set1 = new LineDataSet(yValues, "KMs travelled");
+
+                    set1.setFillAlpha(110);
+
+                    set1.setColor(Color.RED);
+                    set1.setLineWidth(3);
+                    set1.setValueTextSize(10);
+                    set1.setValueTextColor(Color.BLACK);
+                    set1.setCircleColor(Color.BLACK);
+
+                    ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+                    dataSets.add(set1);
+
+                    LineData data = new LineData(dataSets);
+                    mChart.setData(data);
+
+
                 }
             });
         });
@@ -144,13 +198,15 @@ public class StatisticsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == MY_REQUEST_CODE) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Successfully signed in", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        "Successfully signed in",
+                        Toast.LENGTH_SHORT).show();
                 updateActivityUI();                                 // Calls function to update the rest of the UI.
             } else {
                 Toast.makeText(this, "Error response: "
-                        + response.getError().getMessage(), Toast.LENGTH_SHORT).show();
+                        + response.getError().getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
