@@ -6,35 +6,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.lang.reflect.Array;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-
-import static java.lang.String.valueOf;
 
 
 // ToDo: Remove this:
@@ -45,11 +28,12 @@ import static java.lang.String.valueOf;
 
 public class StatisticsActivity extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 7117;                    // Request number used as reference (Can be any number).
+    public static final String DATE_LIST_NAME = "DATE_LIST";            // Name ref to string array that is passed with the Intent.
     List<AuthUI.IdpConfig> providers;                                   // List of sign in providers.
     TextView txtUserName;
+    ListView datesList;
+    Button showStatsBtn;
     Button signOutBtn;
-    Button testInsertDB;
-    Button testRetrieveDB;
 
 
     @Override
@@ -57,9 +41,9 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
         txtUserName = findViewById(R.id.txtView_username);              // TextView to display username.
+        datesList = findViewById(R.id.trip_dates_list);                 // List of dates to show stats for.
+        showStatsBtn = findViewById(R.id.btn_show_stats);               // Button to show statistics.
         signOutBtn = findViewById(R.id.btn_signOut);                    // Button to sign out.
-        testInsertDB = findViewById(R.id.btn_insertDB);                 // ToDo: Remove DB Testing buttons.
-        testRetrieveDB = findViewById(R.id.btn_retrieveDB);
 
         providers = Arrays.asList(                                      // Initiates supported sign-in providers.
                 new AuthUI.IdpConfig.FacebookBuilder().build(),         // Facebook sign in.
@@ -76,7 +60,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
         // Button to sign out.
         signOutBtn.setOnClickListener(v -> {
-            // Creates an listener for failures to sign out.
             AuthUI.getInstance()                                        // Signs the user out of the app.
                     .signOut(StatisticsActivity.this)
                     .addOnCompleteListener(task -> {
@@ -92,6 +75,7 @@ public class StatisticsActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show());
         });
 
+        /*
         // Button to test insertion of data to the DB.
         testInsertDB.setOnClickListener(v -> {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -125,65 +109,12 @@ public class StatisticsActivity extends AppCompatActivity {
             // Save to DB.
             trip.saveTripToDB();
         });
-
-        // Button to test retrieval of data from DB.
-        testRetrieveDB.setOnClickListener(v -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-            // Retrieve data from DB.
-            Trip trip = new Trip(user.getUid());
-            trip.retrieveAllTripsFromDB(user.getUid(), new OnGetDataFromDBListener() {
-                @Override
-                public void onSuccess(ArrayList<Trip> tripList) {
-                    Log.d("FirestoreData", "onSuccess list: " + tripList);
-
-                    // ToDo: Call functions to work on the data.
-
-
-
-                    LineChart mChart;
-                    mChart = findViewById(R.id.line_graph);
-
-
-                    mChart.setDragEnabled(true);
-                    mChart.setScaleEnabled(false);
-
-
-                    ArrayList<Entry> yValues = new ArrayList<>();
-
-                    yValues.add(new Entry(0, 60));
-                    yValues.add(new Entry(1, 50));
-                    yValues.add(new Entry(2, 70));
-                    yValues.add(new Entry(3, 30));
-                    yValues.add(new Entry(4, 50));
-                    yValues.add(new Entry(5, 60));
-                    yValues.add(new Entry(6, 65));
-
-                    LineDataSet set1 = new LineDataSet(yValues, "KMs travelled");
-
-                    set1.setFillAlpha(110);
-
-                    set1.setColor(Color.RED);
-                    set1.setLineWidth(3);
-                    set1.setValueTextSize(10);
-                    set1.setValueTextColor(Color.BLACK);
-                    set1.setCircleColor(Color.BLACK);
-
-                    ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-                    dataSets.add(set1);
-
-                    LineData data = new LineData(dataSets);
-                    mChart.setData(data);
-
-
-                }
-            });
-        });
+        */
     }
 
     // Shows the sign in providers and allow user to sign into app.
     private void showSignInOptions() {
-        startActivityForResult(                                     // Starts the FirebaseUI activity.
+        startActivityForResult(                                         // Starts the FirebaseUI activity.
                 AuthUI.getInstance()
                     .createSignInIntentBuilder()
                     .setIsSmartLockEnabled(false)
@@ -202,7 +133,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 Toast.makeText(this,
                         "Successfully signed in",
                         Toast.LENGTH_SHORT).show();
-                updateActivityUI();                                 // Calls function to update the rest of the UI.
+                updateActivityUI();                                     // Calls function to update the rest of the UI.
             } else {
                 Toast.makeText(this, "Error response: "
                         + response.getError().getMessage(),
@@ -216,15 +147,60 @@ public class StatisticsActivity extends AppCompatActivity {
         String userName;
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user.getDisplayName() == null) {                        // Gets the username.
+        if (user.getDisplayName() == null) {                            // Gets the username.
             userName = "Anonymous user";
         } else {
             userName = user.getDisplayName();
         }
 
-        txtUserName.setText("Signed in as " + userName);            // Show username in activity.
-        signOutBtn.setEnabled(true);                                // Enables the "sign out" button.
-    }
+        txtUserName.setText("Signed in as " + userName);                // Show username in activity.
+        signOutBtn.setEnabled(true);                                    // Enables the "sign out" button.
 
-    // ToDo: Add functions to create graphs for statistics.
+        // Retrieves all data from Firestore for the current user, but only uses the dates.
+        ArrayList<String> arrayOfDates = new ArrayList<>();
+        Trip trip = new Trip(user.getUid());
+        trip.retrieveAllTripsFromDB(user.getUid(), tripList -> {
+            Log.d("FirestoreData", "onSuccess list: " + tripList);
+
+            // Populate the ListView with unique dates from the DB.
+            for (int i = 0; i < tripList.size(); i++) {
+                if (!arrayOfDates.contains(tripList.get(i).getDate())) {
+                    arrayOfDates.add(tripList.get(i).getDate());
+                }
+            }
+
+            // Adds array of dates to "ListView" with an adapter.
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(StatisticsActivity.this,
+                    android.R.layout.simple_list_item_1, arrayOfDates);
+            datesList.setAdapter(adapter);
+
+            // Mark one or more items in the list.
+            ArrayList<String> pickedDates = new ArrayList<>();
+            datesList.setOnItemClickListener((parent, view, position, id) -> {
+                if (view.getTag() != null) {                            // If item has not been marked before.
+                    view.setBackgroundColor(Color.WHITE);
+                    view.setTag(null);
+                    pickedDates.remove(                                 // Removes the un-picked date from the list.
+                            datesList.getItemAtPosition(position).toString());
+                } else {
+                    view.setBackgroundColor(Color.LTGRAY);              // If item has been marked before.
+                    view.setTag("selected");
+                    pickedDates.add(                                    // Adds the picked date to a new list.
+                            datesList.getItemAtPosition(position).toString());
+                }
+
+                if (pickedDates.size() != 0) {                          // Enable "Show Stats" button of one ore more dates have been picked.
+                    showStatsBtn.setEnabled(true);
+                } else {
+                    showStatsBtn.setEnabled(false);
+                }
+
+                showStatsBtn.setOnClickListener(v -> {                  // Listener for the "Show stats" button.
+                    Intent intent = new Intent(StatisticsActivity.this, ShowStatisticsActivity.class);
+                    intent.putExtra(DATE_LIST_NAME, pickedDates);       // Sends the dates that was picked to Activity.
+                    startActivity(intent);                              // Starts the Activity.
+                });
+            });
+        });
+    }
 }
