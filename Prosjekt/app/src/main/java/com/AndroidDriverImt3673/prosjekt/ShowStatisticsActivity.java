@@ -3,6 +3,10 @@ package com.AndroidDriverImt3673.prosjekt;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
@@ -19,6 +23,10 @@ import java.util.concurrent.TimeUnit;
 public class ShowStatisticsActivity extends AppCompatActivity {
     private TextView totalTimeSpentTravelling;
     private TextView totalKMsTravelled;
+    private Spinner statsSpinner;
+    private TextView graph1Header;
+    private TextView graph2Header;
+    private TextView graph3Header;
     private BarChart chartTimeSpent;
     private BarChart chartKmsTravelled;
     private BarChart chartAverageSpeed;
@@ -30,6 +38,10 @@ public class ShowStatisticsActivity extends AppCompatActivity {
 
         totalTimeSpentTravelling = findViewById(R.id.text_total_time);
         totalKMsTravelled = findViewById(R.id.text_total_kms);
+        statsSpinner = findViewById(R.id.spinner_stats);
+        graph1Header = findViewById(R.id.text_graph_1_header);
+        graph2Header = findViewById(R.id.text_graph_2_header);
+        graph3Header = findViewById(R.id.text_graph_3_header);
         chartTimeSpent = findViewById(R.id.graph_bar_timeSpent);
         chartKmsTravelled = findViewById(R.id.graph_bar_kms);
         chartAverageSpeed = findViewById(R.id.graph_bar_averageSpeed);
@@ -41,7 +53,6 @@ public class ShowStatisticsActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Trip trip = new Trip(user.getUid());
         trip.retrieveAllTripsFromDB(user.getUid(), tripList -> {
-            ArrayList<Trip> markedTrips = new ArrayList<>();            // The trips to be displayed.
 
             // Calculate statistics for all trips.
             long timeSpentTravelling = 0;
@@ -52,42 +63,126 @@ public class ShowStatisticsActivity extends AppCompatActivity {
                 timeSpentTravelling += tripList.get(i).getTotalTime();
                 kmsTravelled += tripList.get(i).getKMsTravelled();
             }
+
+            // Calculates how long all trips have been and update view for time and KMs.
             HashMap<String, Long> timeMap = calculateTime(timeSpentTravelling);
             String totalTimeSpentString = timeMap.get("Days") + "d, "
                     + timeMap.get("Hours") + "h, "
                     + timeMap.get("Minutes") + "m, "
                     + timeMap.get("Seconds") + "s";
             totalTimeSpentTravelling.setText(totalTimeSpentString);
-
             String totalKMsString = kmsTravelled + " km";
             totalKMsTravelled.setText(totalKMsString);
 
-            // Filter out trips that we don't want.
-            for (int i = 0; i < showStatsFordates.size(); i++) {        // Outer loop: Loops through array sent from previous activity.
-                for (int j = 0; j < tripList.size(); j++) {             // Inner loop: Loops through Trips array from Firestore.
-                    if (showStatsFordates.get(i).                       // If date sent to this Activity is in one or more of the trips
-                            equals(tripList.get(j).getDate())) {        //   from the Firestore DB, add the "trip" object to a new array.
-                        markedTrips.add(tripList.get(j));               // Add the trip to the list of trips that should be displayed.
+            // Creates the contents of the spinner.
+            ArrayList<String> spinnerContent = new ArrayList<>();
+            spinnerContent.add("All dates");
+            spinnerContent.addAll(showStatsFordates);
+
+            // Creates the spinner adapter.
+            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(ShowStatisticsActivity.this,
+                    R.layout.spinner_item, spinnerContent);
+
+            // Connects the spinner adapter to the spinner view.
+            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            statsSpinner.setAdapter(spinnerAdapter);
+
+            // Change graphs based on what is clicked on in the spinner.
+            statsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String selectedItem = parent.getItemAtPosition(position).toString();
+
+                    if (selectedItem.equals("All dates")) {             // Show stats for all dates.
+                        showStatsForAllDates(showStatsFordates, tripList);
+                    } else {                                            // Show stats for a single date.
+                        showStatsForDate(selectedItem, tripList);
                     }
                 }
-            }
 
-            // Create the graph for "time spent travelling".
-            ArrayList<BarEntry> timeSpentYvalues = calculateBarValue(showStatsFordates, markedTrips, "TotalTime");
-            BarDataSet timeSpentSet = new BarDataSet(timeSpentYvalues, "Time spent travelling in minutes");
-            createChart(chartTimeSpent, showStatsFordates, timeSpentSet);
-
-            // Create the graph for "KMs travelled".
-            ArrayList<BarEntry> kmsTravelledYvalues = calculateBarValue(showStatsFordates, markedTrips, "KMsTravelled");
-            BarDataSet kmsTravelledSet = new BarDataSet(kmsTravelledYvalues, "km's travelled");
-            createChart(chartKmsTravelled, showStatsFordates, kmsTravelledSet);
-
-            // Create the graph for "average speed".
-            ArrayList<BarEntry> averageSpeedYvalues = calculateBarValue(showStatsFordates, markedTrips, "AverageSpeed");
-            BarDataSet averageSpeedSet = new BarDataSet(averageSpeedYvalues, "Average speed in km/h");
-            createChart(chartAverageSpeed, showStatsFordates, averageSpeedSet);
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
         });
     }
+
+    // Shows statistics for all selected dates.
+    public void showStatsForAllDates(ArrayList<String> dates, ArrayList<Trip> trips) {
+        ArrayList<Trip> markedTrips = new ArrayList<>();                // The trips to be displayed.
+
+        graph1Header.setText("Time spent travelling for selected dates");
+        graph2Header.setText("KMs travelled for selected dates");
+        graph3Header.setText("Average speed when driving for selected dates");
+
+        // Filter out trips that we don't want.
+        for (int i = 0; i < dates.size(); i++) {                        // Outer loop: Loops through array sent from previous activity.
+            for (int j = 0; j < trips.size(); j++) {                    // Inner loop: Loops through Trips array from Firestore.
+                if (dates.get(i).                                       // If date sent to this Activity is in one or more of the trips
+                        equals(trips.get(j).getDate())) {               //   from the Firestore DB, add the "trip" object to a new array.
+                    markedTrips.add(trips.get(j));                      // Add the trip to the list of trips that should be displayed.
+                }
+            }
+        }
+
+        // Create the graph for "time spent travelling".
+        ArrayList<BarEntry> timeSpentYvalues = calculateBarValueWhenAllDates(dates, markedTrips, "TotalTime");
+        BarDataSet timeSpentSet = new BarDataSet(timeSpentYvalues, "Time spent travelling in minutes");
+        createChart(chartTimeSpent, dates, timeSpentSet);
+
+        // Create the graph for "KMs travelled".
+        ArrayList<BarEntry> kmsTravelledYvalues = calculateBarValueWhenAllDates(dates, markedTrips, "KMsTravelled");
+        BarDataSet kmsTravelledSet = new BarDataSet(kmsTravelledYvalues, "km's travelled");
+        createChart(chartKmsTravelled, dates, kmsTravelledSet);
+
+        // Create the graph for "average speed".
+        ArrayList<BarEntry> averageSpeedYvalues = calculateBarValueWhenAllDates(dates, markedTrips, "AverageSpeed");
+        BarDataSet averageSpeedSet = new BarDataSet(averageSpeedYvalues, "Average speed in km/h");
+        createChart(chartAverageSpeed, dates, averageSpeedSet);
+    }
+
+    // Shows statistics for a single date.
+    public void showStatsForDate(String date, ArrayList<Trip> trips) {
+        graph1Header.setText("Time spent travelling for trips");
+        graph2Header.setText("KMs travelled for trips");
+        graph3Header.setText("Average speed when driving for trips");
+
+        ArrayList<String> labels = new ArrayList<>();
+        ArrayList<BarEntry> timeSpentYvalues = new ArrayList<>();
+        ArrayList<BarEntry> kmsTravelledYvalues = new ArrayList<>();
+        ArrayList<BarEntry> averageSpeedYvalues = new ArrayList<>();
+
+        // Create the labels and bars with the correct values.
+        int tripNumber = 0;
+        for (int i = 0; i < trips.size(); i++) {                        // Loops through all trips.
+            if (trips.get(i).getDate().equals(date)) {                  // If the trip has the current date.
+                tripNumber += 1;
+                labels.add(" Trip " + tripNumber);                       // Create labels for the graph.
+
+                timeSpentYvalues.add(new BarEntry(tripNumber -1,      // Value to be dispalyed for "total time travelled".
+                        (int) trips.get(i).getTotalTime() / 60));
+
+                kmsTravelledYvalues.add(new BarEntry(tripNumber-1,    // Value to be displayed for "KMs travelled".
+                        trips.get(i).getKMsTravelled()));
+
+                averageSpeedYvalues.add(new BarEntry(tripNumber-1,    // Value to be displayed for "average speed".
+                        trips.get(i).getAverageSpeed()));
+            }
+        }
+
+        // Create the "total time spent travelling" graph.
+        BarDataSet timeSpentSet = new BarDataSet(timeSpentYvalues, "Time spent travelling in minutes");
+        createChart(chartTimeSpent, labels, timeSpentSet);
+
+        // Create the "KMs travelled" graph.
+        BarDataSet kmsTravelledSet = new BarDataSet(kmsTravelledYvalues, "km's travelled");
+        createChart(chartKmsTravelled, labels, kmsTravelledSet);
+
+        // Create the "average speed" graph.
+        BarDataSet averageSpeedSet = new BarDataSet(averageSpeedYvalues, "Average speed in km/h");
+        createChart(chartAverageSpeed, labels, averageSpeedSet);
+    }
+
 
     // Converts seconds to days, hours, minutes and seconds.
     public HashMap calculateTime(long tripSeconds) {
@@ -112,7 +207,7 @@ public class ShowStatisticsActivity extends AppCompatActivity {
     }
 
     // Calculates a bars value and returns an ArrayList of BarEntry's.
-    public ArrayList<BarEntry> calculateBarValue(ArrayList<String> dates, ArrayList<Trip> trips, String type) {
+    public ArrayList<BarEntry> calculateBarValueWhenAllDates(ArrayList<String> dates, ArrayList<Trip> trips, String type) {
         ArrayList<BarEntry> yValues = new ArrayList<>();
         int value = 0;
 
@@ -142,11 +237,11 @@ public class ShowStatisticsActivity extends AppCompatActivity {
     // Creates a new chart.
     public void createChart(BarChart chart, ArrayList<String> labels, BarDataSet dataset) {
         // Configure the data set and create the data.
-        dataset.setColors(ColorTemplate.MATERIAL_COLORS);
-        dataset.setDrawValues(true);
-        dataset.setValueTextColor(Color.BLACK);
-        dataset.setValueTextSize(12);
-        BarData data = new BarData(dataset);
+        dataset.setColors(ColorTemplate.MATERIAL_COLORS);               // Add colors on bars.
+        dataset.setDrawValues(true);                                    // Draws the values for the bar.
+        dataset.setValueTextColor(Color.BLACK);                         // Changes text color to black.
+        dataset.setValueTextSize(12);                                   // Changes the text size.
+        BarData data = new BarData(dataset);                            // Creates the data for the graph.
 
         // Add labels to the chart and configure it.
         chart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
@@ -154,6 +249,7 @@ public class ShowStatisticsActivity extends AppCompatActivity {
         chart.getXAxis().setTextSize(11);                               // Size of label text.
 
         // Configure chart.
+        chart.setTouchEnabled(false);                                   // Disables highlight on bars.
         chart.getDescription().setEnabled(false);                       // Disables description.
         chart.setDrawValueAboveBar(true);                               // Value is displayed above the bar.
         chart.animateXY(1000, 1000);             // Bars are sliding in from left to right.
