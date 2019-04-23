@@ -13,13 +13,15 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ShowStatisticsActivity extends AppCompatActivity {
-    TextView totalTimeSpentTravelling;
-    TextView totalKMsTravelled;
-    BarChart chartTimeSpent;
-    BarChart chartKmsTravelled;
-    BarChart chartAverageSpeed;
+    private TextView totalTimeSpentTravelling;
+    private TextView totalKMsTravelled;
+    private BarChart chartTimeSpent;
+    private BarChart chartKmsTravelled;
+    private BarChart chartAverageSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,48 +43,101 @@ public class ShowStatisticsActivity extends AppCompatActivity {
         trip.retrieveAllTripsFromDB(user.getUid(), tripList -> {
             ArrayList<Trip> markedTrips = new ArrayList<>();            // The trips to be displayed.
 
-            // Filter out trips that we done want.
-            for (int i = 0; i < showStatsFordates.size(); i++) {        // Outer loop:
-                for (int j = 0; j < tripList.size(); j++) {             // Inner loop:
-                    if (showStatsFordates.get(i).equals(tripList.get(j).getDate())) {
+            // Calculate statistics for all trips.
+            long timeSpentTravelling = 0;
+            long kmsTravelled = 0;
+
+            // Display statistics for all trips.
+            for (int i = 0; i < tripList.size(); i++) {                 // Loops through all trips for a user.
+                timeSpentTravelling += tripList.get(i).getTotalTime();
+                kmsTravelled += tripList.get(i).getKMsTravelled();
+            }
+            HashMap<String, Long> timeMap = calculateTime(timeSpentTravelling);
+            String totalTimeSpentString = timeMap.get("Days") + "d, "
+                    + timeMap.get("Hours") + "h, "
+                    + timeMap.get("Minutes") + "m, "
+                    + timeMap.get("Seconds") + "s";
+            totalTimeSpentTravelling.setText(totalTimeSpentString);
+
+            String totalKMsString = kmsTravelled + " km";
+            totalKMsTravelled.setText(totalKMsString);
+
+            // Filter out trips that we don't want.
+            for (int i = 0; i < showStatsFordates.size(); i++) {        // Outer loop: Loops through array sent from previous activity.
+                for (int j = 0; j < tripList.size(); j++) {             // Inner loop: Loops through Trips array from Firestore.
+                    if (showStatsFordates.get(i).                       // If date sent to this Activity is in one or more of the trips
+                            equals(tripList.get(j).getDate())) {        //   from the Firestore DB, add the "trip" object to a new array.
                         markedTrips.add(tripList.get(j));               // Add the trip to the list of trips that should be displayed.
                     }
                 }
             }
 
-            // Make sure all bars have a date.
-            ArrayList<String> labels = new ArrayList<>();
-            for (int i = 0; i < markedTrips.size(); i++) {
-                labels.add(markedTrips.get(i).getDate());
-            }
-
-            // Create the data set for the "time spent travelling" graph.
-            ArrayList<BarEntry> timeSpentYvalues = new ArrayList<>();
-            for (int i = 0; i < markedTrips.size(); i++) {
-                // ToDo: Convert from seconds to minutes.
-                timeSpentYvalues.add(new BarEntry(i, (int) markedTrips.get(i).getTotalTime()));
-            }
+            // Create the graph for "time spent travelling".
+            ArrayList<BarEntry> timeSpentYvalues = calculateBarValue(showStatsFordates, markedTrips, "TotalTime");
             BarDataSet timeSpentSet = new BarDataSet(timeSpentYvalues, "Time spent travelling in minutes");
-            createChart(chartTimeSpent, labels, timeSpentSet);
+            createChart(chartTimeSpent, showStatsFordates, timeSpentSet);
 
-            // Create the data set for the "KMs travelled" graph.
-            ArrayList<BarEntry> kmsTravelledYvalues = new ArrayList<>();
-            for (int i = 0; i < markedTrips.size(); i++) {
-                kmsTravelledYvalues.add(new BarEntry(i, markedTrips.get(i).getKMsTravelled()));
-            }
-            BarDataSet kmsTravelledSet = new BarDataSet(kmsTravelledYvalues, "KMs travelled");
-            createChart(chartKmsTravelled, labels, kmsTravelledSet);
+            // Create the graph for "KMs travelled".
+            ArrayList<BarEntry> kmsTravelledYvalues = calculateBarValue(showStatsFordates, markedTrips, "KMsTravelled");
+            BarDataSet kmsTravelledSet = new BarDataSet(kmsTravelledYvalues, "km's travelled");
+            createChart(chartKmsTravelled, showStatsFordates, kmsTravelledSet);
 
-            // Create the data set for the "average speed" graph.
-            ArrayList<BarEntry> averageSpeedYvalues = new ArrayList<>();
-            for (int i = 0; i < markedTrips.size(); i++) {
-                averageSpeedYvalues.add(new BarEntry(i, markedTrips.get(i).getAverageSpeed()));
-            }
-            BarDataSet averageSpeedSet = new BarDataSet(averageSpeedYvalues, "Average speed in KM/h");
-            createChart(chartAverageSpeed, labels, averageSpeedSet);
+            // Create the graph for "average speed".
+            ArrayList<BarEntry> averageSpeedYvalues = calculateBarValue(showStatsFordates, markedTrips, "AverageSpeed");
+            BarDataSet averageSpeedSet = new BarDataSet(averageSpeedYvalues, "Average speed in km/h");
+            createChart(chartAverageSpeed, showStatsFordates, averageSpeedSet);
         });
     }
 
+    // Converts seconds to days, hours, minutes and seconds.
+    public HashMap calculateTime(long tripSeconds) {
+        int days = (int) TimeUnit.SECONDS.toDays(tripSeconds);          // Gets days from seconds.
+        long hours = TimeUnit.SECONDS.toHours(tripSeconds) -            // Gets the remaining hours.
+                TimeUnit.DAYS.toHours(days);
+        long minutes = TimeUnit.SECONDS.toMinutes(tripSeconds) -        // Gets the remaining minutes.
+                TimeUnit.DAYS.toMinutes(days) -
+                TimeUnit.HOURS.toMinutes(hours);
+        long seconds = TimeUnit.SECONDS.toSeconds(tripSeconds) -        // Gets the remaining seconds.
+                TimeUnit.DAYS.toSeconds(days) -
+                TimeUnit.HOURS.toSeconds(hours) -
+                TimeUnit.MINUTES.toSeconds(minutes);
+
+        HashMap<String, Long> timeMap = new HashMap<>();                // Adds the time in a hash table.
+        timeMap.put("Days", (long) days);
+        timeMap.put("Hours", hours);
+        timeMap.put("Minutes", minutes);
+        timeMap.put("Seconds", seconds);
+
+        return timeMap;                                                 // Returns the hash table of time.
+    }
+
+    // Calculates a bars value and returns an ArrayList of BarEntry's.
+    public ArrayList<BarEntry> calculateBarValue(ArrayList<String> dates, ArrayList<Trip> trips, String type) {
+        ArrayList<BarEntry> yValues = new ArrayList<>();
+        int value = 0;
+
+        for (int i = 0; i < dates.size(); i++) {                        // Loops through the chosen dates.
+            for (int j = 0; j < trips.size(); j++) {                    // Loops through all 'marked trips'
+                if (dates.get(i).equals(trips.get(j).getDate())) {      //   and updates y value if the current Trip has the current date.
+                    switch (type) {
+                        case "TotalTime":                               // Gets the bar value when "total time" should be calculated.
+                            value += (int) trips.get(j).getTotalTime() / 60;
+                            break;
+                        case "KMsTravelled":                            // Gets the bar value when "KMs travelled" should be calculated.
+                            value += trips.get(j).getKMsTravelled();
+                            break;
+                        case "AverageSpeed":                            // Gets the bar value when "average speed" should be calculated.
+                            value += trips.get(j).getAverageSpeed();
+                            break;
+                    }
+                }
+            }
+            yValues.add(new BarEntry(i, value));                        // Add the bar entry to the y values array.
+            value = 0;
+        }
+
+        return yValues;                                                 // Returns the ArrayList of BarEntry's.
+    }
 
     // Creates a new chart.
     public void createChart(BarChart chart, ArrayList<String> labels, BarDataSet dataset) {
@@ -103,8 +158,8 @@ public class ShowStatisticsActivity extends AppCompatActivity {
         chart.setDrawValueAboveBar(true);                               // Value is displayed above the bar.
         chart.animateXY(1000, 1000);             // Bars are sliding in from left to right.
         chart.getXAxis().setLabelCount(labels.size());                  // Add labels on all bars.
-        chart.getAxisLeft().setEnabled(false);                          // Hide grid lines.
-        chart.getAxisRight().setEnabled(false);                         // Hide grid lines.
+        chart.getAxisLeft().setEnabled(true);                           // Enable grid lines on the left side.
+        chart.getAxisRight().setEnabled(false);                         // Hide grid lines on the right side.
         chart.setFitBars(true);                                         // Bars fit to screen.
         chart.setData(data);                                            // Display the chart.
         chart.invalidate();

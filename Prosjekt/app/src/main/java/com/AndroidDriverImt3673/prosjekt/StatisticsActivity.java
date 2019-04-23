@@ -17,23 +17,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-
-// ToDo: Remove this:
-// Firebase Auth Tutorial: https://www.youtube.com/watch?v=EO-_vwfVi7c
-
-// ToDo: Create statistics for the app.
-// ToDo: Create a web-app to show the same statistics.
 
 public class StatisticsActivity extends AppCompatActivity {
     private static final int MY_REQUEST_CODE = 7117;                    // Request number used as reference (Can be any number).
     public static final String DATE_LIST_NAME = "DATE_LIST";            // Name ref to string array that is passed with the Intent.
-    List<AuthUI.IdpConfig> providers;                                   // List of sign in providers.
-    TextView txtUserName;
-    ListView datesList;
-    Button showStatsBtn;
-    Button signOutBtn;
+    private List<AuthUI.IdpConfig> providers;                           // List of sign in providers.
+    private TextView txtUserName;
+    private ListView datesList;
+    private Button showStatsBtn;
+    private Button signOutBtn;
 
 
     @Override
@@ -59,57 +53,17 @@ public class StatisticsActivity extends AppCompatActivity {
         }
 
         // Button to sign out.
-        signOutBtn.setOnClickListener(v -> {
-            AuthUI.getInstance()                                        // Signs the user out of the app.
-                    .signOut(StatisticsActivity.this)
+        signOutBtn.setOnClickListener(v ->
+                AuthUI.getInstance()
+                    .signOut(StatisticsActivity.this)        // Signs the user out of the app.
                     .addOnCompleteListener(task -> {
-                        signOutBtn.setEnabled(false);                   // Disables the "sign-out" button.
+                        signOutBtn.setEnabled(false);               // Disables the "sign-out" button.
                         Toast.makeText(this,
                                 "Successfully signed out",
                                 Toast.LENGTH_SHORT).show();
-                        finish();                                       // Exit to MainActivity.
-                    }).addOnFailureListener(e ->
-                        Toast.makeText(StatisticsActivity.this,  // Display message if error in logout.
-                            "Error: in onFailure for sign out " +
-                                e.getMessage(),
-                                Toast.LENGTH_SHORT).show());
-        });
-
-        /*
-        // Button to test insertion of data to the DB.
-        testInsertDB.setOnClickListener(v -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-            // Create a new trip object.
-            Trip trip = new Trip(user.getUid());
-
-            // Set the date for the trip.
-            String datePattern = "dd-MM-yyyy";
-            SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
-            String date = dateFormat.format(new Date());
-            trip.setDate(date);
-
-            // Start time as unix time.
-            long unixTime = System.currentTimeMillis() / 1000L;
-            trip.setStartTime(unixTime);
-
-            // End time as unix time (+ 1 hour).
-            long tempEndTime = unixTime + 7200L;
-            trip.setEndTime(tempEndTime);
-
-            // Distance travelled.
-            trip.setKMsTravelled(100);
-
-            // Average speed.
-            trip.setAverageSpeed(60);
-
-            // Set the total time in seconds.
-            trip.setTotalTime(trip.getEndTime() - trip.getStartTime());
-
-            // Save to DB.
-            trip.saveTripToDB();
-        });
-        */
+                        finish();                                    // Exit to MainActivity.
+                    })
+        );
     }
 
     // Shows the sign in providers and allow user to sign into app.
@@ -168,6 +122,7 @@ public class StatisticsActivity extends AppCompatActivity {
                     arrayOfDates.add(tripList.get(i).getDate());
                 }
             }
+            Collections.reverse(arrayOfDates);                          // Reverse the ArrayList to display the newest first.
 
             // Adds array of dates to "ListView" with an adapter.
             ArrayAdapter<String> adapter = new ArrayAdapter<>(StatisticsActivity.this,
@@ -178,14 +133,14 @@ public class StatisticsActivity extends AppCompatActivity {
             ArrayList<String> pickedDates = new ArrayList<>();
             datesList.setOnItemClickListener((parent, view, position, id) -> {
                 if (view.getTag() != null) {                            // If item has not been marked before.
-                    view.setBackgroundColor(Color.WHITE);
-                    view.setTag(null);
+                    view.setBackgroundColor(Color.WHITE);               // Change background color to de-highlight item.
+                    view.setTag(null);                                  // Update the items tag.
                     pickedDates.remove(                                 // Removes the un-picked date from the list.
                             datesList.getItemAtPosition(position).toString());
-                } else {
-                    view.setBackgroundColor(Color.LTGRAY);              // If item has been marked before.
-                    view.setTag("selected");
-                    pickedDates.add(                                    // Adds the picked date to a new list.
+                } else {                                                // If item has been marked before.
+                    view.setBackgroundColor(Color.LTGRAY);              // Change background color to highlight item.
+                    view.setTag("selected");                            // Update the items tag.
+                    pickedDates.add(                                    // Adds the picked date to a the list.
                             datesList.getItemAtPosition(position).toString());
                 }
 
@@ -196,6 +151,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 }
 
                 showStatsBtn.setOnClickListener(v -> {                  // Listener for the "Show stats" button.
+                    Collections.sort(pickedDates);                      // Sorts the ArrayList.
                     Intent intent = new Intent(StatisticsActivity.this, ShowStatisticsActivity.class);
                     intent.putExtra(DATE_LIST_NAME, pickedDates);       // Sends the dates that was picked to Activity.
                     startActivity(intent);                              // Starts the Activity.

@@ -4,7 +4,6 @@ import android.util.Log;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 
 // Class to represent data that should be saved to Google Cloud Firestore for authenticated users.
