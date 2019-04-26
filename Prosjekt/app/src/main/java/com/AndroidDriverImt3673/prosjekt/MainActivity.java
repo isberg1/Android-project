@@ -107,15 +107,23 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     }
 
     public void buttonClick(View view) {
-        listener.setStopLitening(false);
-        listener.recognize();
+        if (listener.getIsRunning()) {              // If the voice recognition is already running:
+            listener.setStopLitening(true);         // Stop it. // ToDo Is this the correct way to stop the recognition service?
+
+            speakButton.setText("Voice recognition is OFF");
+
+        } else {                                    // If the voice recognition is not running:
+            listener.setStopLitening(false);        // Start it.
+            listener.recognize();
+
+            speakButton.setText("Voice recognition is ON");
+        }
 
     }
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 527: {
                 // If request is cancelled, the result arrays are empty.

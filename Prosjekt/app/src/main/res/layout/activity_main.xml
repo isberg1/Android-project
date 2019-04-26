@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/scrollView"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="50dp"
-        android:orientation="vertical">
-
+        android:layout_height="5000dp">
 
         <TextureView
             android:id="@+id/texture"
-            android:layout_width="match_parent"
+            android:layout_width="400dp"
             android:layout_height="200dp"
             android:layout_above="@+id/btn_takepicture"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="bottom"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView1"
-            android:text=""/>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="50sp" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/btn_speak"
-            android:text="btn_speak"
-            android:onClick="buttonClick"/>
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="buttonClick"
+            android:text="Voice Recognition is OFF"
+            app:layout_constraintTop_toBottomOf="@+id/errorView1"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <TextView
             android:id="@+id/errorView1"
-            android:text="errors are displayed her"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Voice recognition output"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/texture" />
 
         <Button
             android:id="@+id/btn_takepicture"
@@ -48,38 +49,31 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/take_picture" />
+            android:layout_marginTop="8dp"
+            android:text="@string/take_picture"
+            app:layout_constraintTop_toBottomOf="@+id/btn_speak"
+            tools:layout_editor_absoluteX="-16dp" />
 
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="btnGPS"
             android:id="@+id/btnGPS"
-            android:onClick="GoToGPS"/>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp" />
-
-        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Show stats"
+            android:layout_marginTop="8dp"
+            android:onClick="GoToGPS"
+            android:text="Start a new trip"
+            app:layout_constraintTop_toBottomOf="@+id/btn_takepicture"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <Button
             android:id="@+id/btn_show_stats"
-            android:onClick="GoToStats"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:onClick="GoToStats"
+            android:text="Show statistics"
+            app:layout_constraintTop_toBottomOf="@+id/btnGPS"
+            tools:layout_editor_absoluteX="0dp" />
 
-
-
-
-    </LinearLayout>
-
-
-
-</RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

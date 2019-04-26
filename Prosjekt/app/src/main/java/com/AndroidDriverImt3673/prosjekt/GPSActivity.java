@@ -48,6 +48,7 @@ public class GPSActivity extends Activity implements GPSListener  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gps);
         Button btnI = findViewById(R.id.btnI);
+
         btnI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,6 +60,7 @@ public class GPSActivity extends Activity implements GPSListener  {
                 startActivity(startIncident);
             }
         });
+
         Button btnAPI = findViewById(R.id.btnAPI);
         que = Volley.newRequestQueue(this);
         btnAPI.setOnClickListener(new View.OnClickListener(){
@@ -67,6 +69,7 @@ public class GPSActivity extends Activity implements GPSListener  {
                 sendAPI();
             }
         });
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
@@ -74,6 +77,7 @@ public class GPSActivity extends Activity implements GPSListener  {
             startApp();
             sendAPI();
         }
+
         this.updateSpeed(null);
     }
 
