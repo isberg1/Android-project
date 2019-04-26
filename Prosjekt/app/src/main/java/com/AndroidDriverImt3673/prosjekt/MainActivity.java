@@ -38,15 +38,11 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        textureView = findViewById(R.id.texture);
 
-
-        if (isOrientationPortrait(this)){
-            setContentView(R.layout.activity_main);
-            textureView = findViewById(R.id.texture);
-        } else {
-            setContentView(R.layout.activity_main);
-            textureView = findViewById(R.id.texture);
-            textureView.setRotation(270);
+        if (!isOrientationPortrait(this)){
+            textureView.setRotation(90);
         }
 
 
@@ -135,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
                 }
                 return;
             }
-            
+
             // other 'case' lines to check for other
             // permissions this app might request
         }
