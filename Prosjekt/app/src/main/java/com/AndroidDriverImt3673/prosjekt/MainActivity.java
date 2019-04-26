@@ -42,8 +42,11 @@ public class MainActivity extends AppCompatActivity implements CallBack {
 
         if (isOrientationPortrait(this)){
             setContentView(R.layout.activity_main);
+            textureView = findViewById(R.id.texture);
         } else {
             setContentView(R.layout.activity_main);
+            textureView = findViewById(R.id.texture);
+            textureView.setRotation(270);
         }
 
 
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
         }
 
 
-        textureView = findViewById(R.id.texture);
+
         assert textureView != null;
         cameraClass = new CameraClass(this, textureView);
 
@@ -132,15 +135,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
                 }
                 return;
             }
-
-            case REQUEST_CAMERA_PERMISSION: {
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    // close the app
-                    Toast.makeText(MainActivity.this, "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            }
-
+            
             // other 'case' lines to check for other
             // permissions this app might request
         }

@@ -114,6 +114,7 @@ public class CameraClass {
                 cameraDevice = null;
 
             }
+
             return false;
         }
         // required function, but not used
