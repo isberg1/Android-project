@@ -118,12 +118,6 @@ public class GPSActivity extends Activity implements GPSListener  {
         que.add(request);
     }
 
-    public void finish()
-    {
-        super.finish();
-        System.exit(0);
-    }
-
     @SuppressLint("SetTextI18n")
     private void updateSpeed(CLocation location) {
         float CurrentSpeed = 0;
