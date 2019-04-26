@@ -4,6 +4,7 @@ package com.AndroidDriverImt3673.prosjekt;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -28,6 +29,12 @@ class Listener implements RecognitionListener {
     // interface used to get master/mother class to take a picture
     private CallBack takePicture;
 
+    private boolean stopLitening = false;
+
+    private Integer original_volume_level;
+    private AudioManager audioManager;
+
+
     public boolean isRunning() {
         return isRunning;
     }
@@ -45,6 +52,7 @@ class Listener implements RecognitionListener {
         this.activity = (Activity) context;
         this.speechRecognizer = null;
         this.takePicture = (CallBack) context;
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
 
@@ -60,7 +68,11 @@ class Listener implements RecognitionListener {
         // set flag
         setIsRunning(false);
         // restarts the speech recognition
-        recognize();
+
+
+        if (!stopLitening) {
+            recognize();
+        }
     }
 
     /**
@@ -111,10 +123,13 @@ class Listener implements RecognitionListener {
             } else if (entry.toLowerCase().contains("listening")) {
                 // close app
                 if (entry.toLowerCase().contains("stop")) {
-                    errorView1.setText("stopping app");
+                    errorView1.setText("stopping Speech Recognizer");
                     Activity activity = (Activity) context;
                     // close app
-                    activity.finish();
+                    stopLitening= true;
+                    speechRecognizer.cancel();
+                    stopSpeechRecognizer();
+                    //activity.finish();
                 }
             }
         }
@@ -152,8 +167,10 @@ class Listener implements RecognitionListener {
                         // configure speech recognition
                         Intent intent = configureSpeechRecognition();
                         // starts speech recognition
-                        speechRecognizer.startListening(intent);
-                        Log.d(TAG, "run: in recognize");
+                        if (!stopLitening) {
+                            speechRecognizer.startListening(intent);
+                            Log.d(TAG, "run: in recognize");
+                        }
                     }
                 });
             }
@@ -242,10 +259,13 @@ class Listener implements RecognitionListener {
     }
 
     public void startSpeechRecognizer() {
+        original_volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
     }
 
     public void stopSpeechRecognizer() {
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, original_volume_level, 0);
         speechRecognizer.stopListening();
     }
 
@@ -283,7 +303,5 @@ class Listener implements RecognitionListener {
     {
         Log.d(TAG, "onEvent " + eventType);
     }
-
-
 
 }

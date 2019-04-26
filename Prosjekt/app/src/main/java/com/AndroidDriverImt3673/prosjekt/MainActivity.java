@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     private CameraClass cameraClass;
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,8 +177,9 @@ public class MainActivity extends AppCompatActivity implements CallBack {
         Log.e(TAG, "onPause");
         //closeCamera
         cameraClass.stopBackgroundThread();
-        super.onPause();
         listener.stopSpeechRecognizer();
+        super.onPause();
+
 
     }
 
