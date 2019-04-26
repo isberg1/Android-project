@@ -34,7 +34,7 @@ class Listener implements RecognitionListener {
     private Integer original_volume_level;
     private AudioManager audioManager;
 
-
+    public void setStopLitening(boolean bool){ stopLitening = bool; }
     public boolean isRunning() {
         return isRunning;
     }

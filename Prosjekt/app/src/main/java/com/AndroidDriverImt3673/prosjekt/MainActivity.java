@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     }
 
     public void buttonClick(View view) {
-
+        listener.setStopLitening(false);
         listener.recognize();
 
     }
