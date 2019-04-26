@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "822099442096-b8j218kvaupmjssdnuhc46rl77jo48kf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.AndroidDriverImt3673.prosjekt",
+            "certificate_hash": "a6eee1b2ac73143dac5eacb87577a1d74c3ffb9d"
+          }
+        },
+        {
           "client_id": "822099442096-iv8bkkrd78cqgcto8b8jlqdhg02jps7i.apps.googleusercontent.com",
           "client_type": 3
         }

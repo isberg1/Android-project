@@ -108,8 +108,12 @@ public class CameraClass {
          */
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            cameraDevice.close();
-            cameraDevice = null;
+
+            if (cameraDevice == null) {
+                cameraDevice.close();
+                cameraDevice = null;
+
+            }
             return false;
         }
         // required function, but not used
