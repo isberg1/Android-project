@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">Prosjekt</string>
-    <string name="facebook_application_id" translatable="false">413653422532303</string>
-    <string name="facebook_login_protocol_scheme" translatable="false">fb413653422532303</string>
-</resources>
