@@ -1,6 +1,7 @@
 package com.AndroidDriverImt3673.prosjekt;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,8 +9,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +37,15 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+
+        if (isOrientationPortrait(this)){
+            setContentView(R.layout.activity_main);
+        } else {
+            setContentView(R.layout.activity_main);
+        }
+
+
         speakButton = (Button) findViewById(R.id.btn_speak);
         mText = (TextView) findViewById(R.id.textView1);
         errorView1 = findViewById(R.id.errorView1);
@@ -196,5 +207,22 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     public void GoToStats(View view) {
         Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
         startActivity(intent);
+    }
+
+
+
+
+    public boolean isOrientationPortrait(Context context){
+        final int screenOrientation = ((WindowManager)  context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
+        switch (screenOrientation) {
+            case Surface.ROTATION_0:
+                return true;
+            case Surface.ROTATION_90:
+                return false;
+            case Surface.ROTATION_180:
+                return true;
+            default:
+                return false;
+        }
     }
 }
