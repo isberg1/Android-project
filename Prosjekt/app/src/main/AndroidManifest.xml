@@ -3,6 +3,12 @@
     package="com.AndroidDriverImt3673.prosjekt">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera2.full" />
 
     <application
         android:allowBackup="true"
@@ -13,6 +19,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ShowStatisticsActivity"></activity>
         <activity android:name=".StatisticsActivity" />
+        <activity android:name=".IncidentsActivity"></activity>
+        <activity android:name=".GPSActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
