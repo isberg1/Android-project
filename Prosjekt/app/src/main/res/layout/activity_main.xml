@@ -5,6 +5,7 @@
     android:id="@+id/scrollView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#4D5057"
     tools:context=".MainActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -13,25 +14,29 @@
 
         <TextureView
             android:id="@+id/texture"
-            android:layout_width="400dp"
+            android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_above="@+id/btn_takepicture"
             android:layout_gravity="bottom"
-            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_takepicture" />
 
 
         <Button
             android:id="@+id/btn_speak"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:background="#dd9142"
             android:onClick="buttonClick"
-            android:text="Voice Recognition is OFF"
-            app:layout_constraintTop_toBottomOf="@+id/errorView1"
-            tools:layout_editor_absoluteX="0dp" />
+            android:text="Voice Recognition\n OFF"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#F8FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnGPS"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/errorView1"
@@ -45,35 +50,47 @@
 
         <Button
             android:id="@+id/btn_takepicture"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
+            android:background="#34b074"
             android:text="@string/take_picture"
-            app:layout_constraintTop_toBottomOf="@+id/btn_speak"
-            tools:layout_editor_absoluteX="-16dp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#F8FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_show_stats"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnGPS" />
 
 
         <Button
             android:id="@+id/btnGPS"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:background="#428edd"
             android:onClick="GoToGPS"
             android:text="Start a new trip"
-            app:layout_constraintTop_toBottomOf="@+id/btn_takepicture"
-            tools:layout_editor_absoluteX="0dp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#F8FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_speak"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btn_show_stats"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:background="#b03470"
             android:onClick="GoToStats"
             android:text="Show statistics"
-            app:layout_constraintTop_toBottomOf="@+id/btnGPS"
-            tools:layout_editor_absoluteX="0dp" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="#F8FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_takepicture"
+            app:layout_constraintTop_toBottomOf="@+id/btn_speak" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
