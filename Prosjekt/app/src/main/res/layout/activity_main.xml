@@ -6,19 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
+<!--    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="50dp"
         android:orientation="vertical">
+-->
 
-
-        <TextureView
-            android:id="@+id/texture"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_above="@+id/btn_takepicture"
-            android:layout_gravity="bottom"/>
+    <TextureView
+        android:id="@+id/texture"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_above="@+id/btn_takepicture"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="300dp"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="0dp" />
 
 
         <TextView
@@ -30,55 +33,90 @@
             android:layout_width="match_parent"
             android:layout_height="50sp" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_speak"
-            android:text="btn_speak"
-            android:onClick="buttonClick"/>
+    <Button
+        android:id="@+id/btn_speak"
+        android:layout_width="135dp"
+        android:layout_height="135dp"
+        android:layout_alignStart="@+id/texture"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="516dp"
+        android:layout_marginEnd="279dp"
+        android:layout_marginBottom="92dp"
+        android:background="@drawable/button_speak"
+        android:onClick="buttonClick" />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/errorView1"
             android:text="errors are displayed her"/>
 
-        <Button
-            android:id="@+id/btn_takepicture"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/take_picture" />
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="121dp"
+        android:layout_height="120dp"
+        android:layout_alignStart="@+id/btn_speak"
+        android:layout_alignTop="@+id/btn_show_stats"
+        android:layout_alignEnd="@+id/btnGPS"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="517dp"
+        android:layout_marginEnd="140dp"
+        android:layout_marginBottom="94dp"
+        android:background="@drawable/button_start" />
+
+    <Button
+        android:id="@+id/btn_takepicture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="-58dp"
+        android:text="@string/take_picture"
+        android:visibility="invisible"
+        tools:visibility="invisible" />
 
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="15dp" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="btnGPS"
-            android:id="@+id/btnGPS"
-            android:onClick="GoToGPS"/>
+    <Button
+        android:id="@+id/btnGPS"
+        android:layout_width="135dp"
+        android:layout_height="135dp"
+        android:layout_alignTop="@+id/btn_show_stats"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="274dp"
+        android:layout_marginTop="520dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="91dp"
+        android:background="@drawable/button_gps"
+        android:onClick="GoToGPS" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="15dp" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Show stats"
-            android:id="@+id/btn_show_stats"
-            android:onClick="GoToStats"/>
+    <Button
+        android:id="@+id/btn_show_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="GoToStats"
+        android:text="Show stats"
+        android:visibility="invisible"
+        tools:layout_editor_absoluteX="39dp"
+        tools:layout_editor_absoluteY="48dp"
+        tools:visibility="invisible" />
 
 
 
 
-    </LinearLayout>
+<!--    </LinearLayout> -->
 
 
 
