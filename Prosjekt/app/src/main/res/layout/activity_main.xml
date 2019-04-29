@@ -9,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="50dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="50dp">
 
 
         <TextureView
@@ -18,29 +18,31 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_above="@+id/btn_takepicture"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="bottom" />
 
 
         <TextView
+            android:id="@+id/textView1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textView1"
-            android:text=""/>
+            android:text="" />
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="50sp" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/btn_speak"
-            android:text="btn_speak"
-            android:onClick="buttonClick"/>
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="buttonClick"
+            android:text="btn_speak" />
+
+        <TextView
             android:id="@+id/errorView1"
-            android:text="errors are displayed her"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="errors are displayed her" />
 
         <Button
             android:id="@+id/btn_takepicture"
@@ -48,8 +50,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/take_picture" />
 
 
@@ -58,24 +60,22 @@
             android:layout_height="15dp" />
 
         <Button
+            android:id="@+id/btnGPS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="btnGPS"
-            android:id="@+id/btnGPS"
-            android:onClick="GoToGPS"/>
+            android:onClick="GoToGPS"
+            android:text="btnGPS" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="15dp" />
 
         <Button
+            android:id="@+id/btn_show_stats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Show stats"
-            android:id="@+id/btn_show_stats"
-            android:onClick="GoToStats"/>
-
-
+            android:onClick="GoToStats"
+            android:text="Show stats" />
 
 
     </LinearLayout>

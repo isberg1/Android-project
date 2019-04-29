@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements CallBack {
     private static final String TAG = "MainActivity";
@@ -49,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements CallBack {
         speakButton = (Button) findViewById(R.id.btn_speak);
         mText = (TextView) findViewById(R.id.textView1);
         errorView1 = findViewById(R.id.errorView1);
-        listener = new Listener(this, mText, errorView1);
-
+        listener = Listener.getListener(this, mText, errorView1);
+//        listener = new Listener(this, mText, errorView1);
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -73,14 +72,6 @@ public class MainActivity extends AppCompatActivity implements CallBack {
             }
         }
 
-        if (savedInstanceState != null) {
-            boolean bool = savedInstanceState.getBoolean("running");
-            if (bool){
-                listener.setIsRunning(true);
-            }
-        }
-
-
 
         assert textureView != null;
         cameraClass = new CameraClass(this, textureView);
@@ -98,16 +89,19 @@ public class MainActivity extends AppCompatActivity implements CallBack {
 
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("running", listener.getIsRunning());
-        Log.d(TAG, "onSaveInstanceState:  " + listener.getIsRunning());
-    }
 
+    /**
+     * start and stops the voice recognition
+     * @param view the button that was pushed
+     */
     public void buttonClick(View view) {
-        listener.setStopLitening(false);
-        listener.recognize();
+        Log.d(TAG, "buttonClick: " + listener.getIsRunning());
+        if (listener.getIsRunning()) {
+            listener.stop();
+
+        } else {
+            listener.start();
+        }
 
     }
 
@@ -141,8 +135,12 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     @Override
     protected void onStart() {
         super.onStart();
+        if (listener == null) {
+            listener = Listener.getListener(this, mText, errorView1);
+        }
         listener.startSpeechRecognizer();
     }
+
 
     @Override
     protected void onResume() {
@@ -187,24 +185,34 @@ public class MainActivity extends AppCompatActivity implements CallBack {
         Log.d(TAG, "onDestroy: ");
     }
 
+    /**
+     * callback function
+     * is called form listener class
+     * makes camera take 1 picture
+     */
     @Override
     public void take1Picture() {
         cameraClass.takePicture();
     }
 
     public void GoToGPS(View view) {
+        listener.stop();
         final Intent startGPS  = new Intent(MainActivity.this, GPSActivity.class);
         startActivity(startGPS);
     }
 
     public void GoToStats(View view) {
+        listener.stop();
         Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
         startActivity(intent);
     }
 
 
-
-
+    /**
+     * finds the current screen orientation
+     * @param context
+     * @return true if Portrait, false if not
+     */
     public boolean isOrientationPortrait(Context context){
         final int screenOrientation = ((WindowManager)  context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
         switch (screenOrientation) {
@@ -218,4 +226,14 @@ public class MainActivity extends AppCompatActivity implements CallBack {
                 return false;
         }
     }
+
+    /**
+     * stops the speech recogniser correctly
+     */
+    @Override
+    public void onBackPressed() {
+        listener.stop();
+        moveTaskToBack(true);
+    }
+
 }
