@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements CallBack {
     private CameraClass cameraClass;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
 
 
         speakButton = (Button) findViewById(R.id.btn_speak);
-        mText = (TextView) findViewById(R.id.textView1);
+        mText = (TextView) findViewById(R.id.mText);
         errorView1 = findViewById(R.id.errorView1);
         listener = Listener.getListener(this, mText, errorView1);
 //        listener = new Listener(this, mText, errorView1);
