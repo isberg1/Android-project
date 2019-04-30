@@ -37,3 +37,8 @@ For configuring the GUI, we may try to use interchangeable fragment.
 For the most advanced feature (detect pedestrians) we will use the phones camera app combined with the OpenCV library. A possible way to solve this is that we try to use the phones GPS/google maps API to determine the cars current position, its direction and speed. And combine this data with data form the camera to determine if the car is about to collide with something. For camera/OpenCV picture analysis, we may start by tying to identify the silhouettes of people. 
 
 ![alt text](https://github.com/isberg1/Android-project/blob/master/Activity_design_Idea.png "")
+
+
+## Project rapport
+In this project we have made an android driving assistant app. It can find the street you are one, its speed limit and your current driving speed. It is able to record driving statistics and backing them up to Googles Firebase system. The app can also access online traffic rapports and display them. Finally the app is capable of listening for a voice command that’s. and upon speech recognition activation, and the command ‘picture’ will use the camera2 API to take a picture.
+
