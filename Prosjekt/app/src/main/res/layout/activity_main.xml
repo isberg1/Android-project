@@ -1,106 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" -->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<!--    <LinearLayout
+<!--    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="50dp"
-        android:orientation="vertical">
+        android:layout_height="5000dp">
 -->
 
     <TextureView
         android:id="@+id/texture"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_width="410dp"
+        android:layout_height="234dp"
         android:layout_above="@+id/btn_takepicture"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="300dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView1"
-            android:text=""/>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="50sp" />
-
-    <Button
-        android:id="@+id/btn_speak"
-        android:layout_width="135dp"
-        android:layout_height="135dp"
-        android:layout_alignStart="@+id/texture"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="516dp"
-        android:layout_marginEnd="279dp"
-        android:layout_marginBottom="92dp"
-        android:background="@drawable/button_speak"
-        android:onClick="buttonClick" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/errorView1"
-            android:text="errors are displayed her"/>
-
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="121dp"
-        android:layout_height="120dp"
-        android:layout_alignStart="@+id/btn_speak"
-        android:layout_alignTop="@+id/btn_show_stats"
-        android:layout_alignEnd="@+id/btnGPS"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="150dp"
-        android:layout_marginTop="517dp"
-        android:layout_marginEnd="140dp"
-        android:layout_marginBottom="94dp"
-        android:background="@drawable/button_start" />
-
-    <Button
-        android:id="@+id/btn_takepicture"
+    <TextView
+        android:id="@+id/textView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="-58dp"
-        android:text="@string/take_picture"
+        android:text=""
         android:visibility="invisible"
         tools:visibility="invisible" />
 
+    <Button
+        android:id="@+id/btn_speak"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_speak"
+        android:onClick="buttonClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.833" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp" />
+    <TextView
+        android:id="@+id/errorView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="errors are displayed her"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="422dp" />
+
+    <Button
+        android:id="@+id/btn_settings"
+        android:layout_width="400dp"
+        android:layout_height="95dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/errorView1"
+        app:layout_constraintVertical_bias="1.0" />
+        <!--android:onClick="GoToGPS"--><![CDATA[
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/texture"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.833" />
+
+
+    ]]>
 
     <Button
         android:id="@+id/btnGPS"
-        android:layout_width="135dp"
-        android:layout_height="135dp"
-        android:layout_alignTop="@+id/btn_show_stats"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="274dp"
-        android:layout_marginTop="520dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="91dp"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/button_gps"
-        android:onClick="GoToGPS" />
+        android:onClick="GoToGPS"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/texture"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.833" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp" />
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/button_start"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_settings"
+        app:layout_constraintEnd_toEndOf="@+id/btnGPS"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="@+id/btn_speak"
+        app:layout_constraintTop_toTopOf="@+id/texture"
+        app:layout_constraintVertical_bias="0.842" />
+        <!--android:onClick="GoToGPS"--><![CDATA[
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/texture"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.833" />
+
+    ]]>
 
     <Button
         android:id="@+id/btn_show_stats"
@@ -109,15 +135,83 @@
         android:onClick="GoToStats"
         android:text="Show stats"
         android:visibility="invisible"
-        tools:layout_editor_absoluteX="39dp"
-        tools:layout_editor_absoluteY="48dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="448dp"
         tools:visibility="invisible" />
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Driving Speed"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/texture"
+        app:layout_constraintVertical_bias="0.357" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Speed Limit"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.975"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView1"
+        app:layout_constraintVertical_bias="0.357" />
+
+    <TextView
+        android:id="@+id/driving_speed"
+        android:layout_width="56dp"
+        android:layout_height="44dp"
+        android:text="72"
+        android:textSize="32dp"
+        tools:layout_editor_absoluteX="68dp"
+        tools:layout_editor_absoluteY="273dp" />
+
+    <TextView
+        android:id="@+id/speed_limit"
+        android:layout_width="56dp"
+        android:layout_height="44dp"
+        android:text="70"
+        android:textSize="32dp"
+        tools:layout_editor_absoluteX="321dp"
+        tools:layout_editor_absoluteY="273dp" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="km/h"
+        tools:layout_editor_absoluteX="321dp"
+        tools:layout_editor_absoluteY="317dp" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="km/h"
+        tools:layout_editor_absoluteX="68dp"
+        tools:layout_editor_absoluteY="317dp" />
+
+    <TextView
+        android:id="@+id/street"
+        android:layout_width="309dp"
+        android:layout_height="52dp"
+        android:textSize="36dp"
+        tools:layout_editor_absoluteX="51dp"
+        tools:layout_editor_absoluteY="359dp" />
 
 
-
-<!--    </LinearLayout> -->
-
-
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
+<!-- </ScrollView> -->
