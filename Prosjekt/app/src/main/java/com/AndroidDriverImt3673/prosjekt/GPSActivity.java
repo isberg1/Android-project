@@ -12,6 +12,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,23 +25,39 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
 public class GPSActivity extends Activity implements GPSListener  {
     private TextView textView;
+    private TextView TxtTmp;
     private RequestQueue que;
     public double longi = 0;
     public double lati = 0;
     public static String SEND_LONG = "longi";
     public static String SEND_LAT = "lati";
+    public Button btnTrip;
+    public double tripStartLongitude;
+    public double tripStartLatitude;
+    public double tripEndLongitude;
+    public double tripEndLatitude;
+    public long tripStartTime;
+    public long tripEndTime;
+    public double tripAverageSpeed;
+    public double tripKMTravelled;
+    public String tripDate;
+    private boolean tripActive = false;
 
 
 
@@ -48,6 +66,13 @@ public class GPSActivity extends Activity implements GPSListener  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gps);
         Button btnI = findViewById(R.id.btnI);
+        btnTrip = findViewById(R.id.btnTrip);
+        btnTrip.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                startTrip();
+            }
+        });
         btnI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +101,110 @@ public class GPSActivity extends Activity implements GPSListener  {
         }
         this.updateSpeed(null);
     }
+
+    public void startTrip() {
+        tripActive = true;
+        tripStartLatitude = lati;
+        tripStartLongitude = longi;
+        tripStartTime = System.currentTimeMillis() / 1000L;
+        String datePattern = "dd-MM-yyyy";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
+        tripDate = dateFormat.format(new Date());
+
+        if (tripActive) {
+            btnTrip.setText("End Trip");
+            btnTrip.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    endTrip(tripStartLatitude, tripStartLongitude, tripStartTime);
+                    tripActive = false;
+                }
+            });
+        }
+    }
+
+    public void endTrip(double startLat, double startLong, long startTime) {
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        tripEndLongitude = location.getLongitude();
+        tripEndLatitude = location.getLatitude();
+        tripEndTime = System.currentTimeMillis() / 1000L;
+
+        // FOR PRESENTATION PURPOSES, DO NOT REMOVE!
+        String url = "https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=47.6044,-122.3345&destinations=45.5347,-122.6231&travelMode=driving&key=AhloF-tCKXkUy1HBgDXp9xljOoebG6BzAAJz0xu8xtDbojMFFIxew7DokDbp5nfe";
+
+        
+
+        JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>(){
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("resourceSets");
+                    for (int i = 0; i< jsonArray.length(); i++){
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        JSONArray jsonArray1 = jsonObject.getJSONArray("resources");
+                        for (int j = 0; j< jsonArray1.length(); j++) {
+                            JSONObject jsonObject1 = jsonArray1.getJSONObject(j);
+                            JSONArray jsonArray2 = jsonObject1.getJSONArray("results");
+                            for (int k = 0; k< jsonArray2.length(); k++) {
+                                JSONObject jsonObject2 = jsonArray2.getJSONObject(k);
+                                tripKMTravelled = jsonObject2.getDouble("travelDistance");
+                                double Duration = jsonObject2.getDouble("travelDuration");
+                                tripAverageSpeed = (tripKMTravelled / (Duration * 0.0166666667));
+                                saveToFireBase(tripDate,tripStartTime, tripEndTime, tripKMTravelled, tripAverageSpeed);
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        que.add(request2);
+    }
+
+    public void saveToFireBase(String tripDate, long tripStartTime, long tripEndTime, double tripKMTravelled, double tripAverageSpeed) {
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            Trip trip = new Trip(auth.getCurrentUser().getUid());
+
+            trip.setDate(tripDate);
+
+            trip.setStartTime(tripStartTime);
+
+            trip.setEndTime(tripEndTime);
+
+            int distance = (int)tripKMTravelled;
+            trip.setKMsTravelled(distance);
+
+            int avgSpeed = (int) tripAverageSpeed;
+            trip.setAverageSpeed(avgSpeed);
+
+            trip.setTotalTime(trip.getEndTime() - trip.getStartTime());
+            trip.saveTripToDB();
+            btnTrip.setText("Start Trip");
+            Toast.makeText(this, "Trip successfully saved", Toast.LENGTH_LONG).show();
+            btnTrip.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    startTrip();
+                }
+            });
+        }
+        else {
+            return;
+        }
+
+    }
+
 
     public void sendAPI(){
         textView = findViewById(R.id.txtAPIRes);
