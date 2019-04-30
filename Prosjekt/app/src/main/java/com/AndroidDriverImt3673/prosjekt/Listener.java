@@ -20,6 +20,8 @@ import java.util.ArrayList;
 class Listener implements RecognitionListener {
     private static final String TAG = "Listener";
 
+    private static Listener single_instance = null;
+
     private boolean isRunning = false;
     private TextView errorView1;
     private TextView mText;
@@ -35,9 +37,6 @@ class Listener implements RecognitionListener {
     private AudioManager audioManager;
 
     public void setStopLitening(boolean bool){ stopLitening = bool; }
-    public boolean isRunning() {
-        return isRunning;
-    }
 
     /**
      * constructor
@@ -45,7 +44,7 @@ class Listener implements RecognitionListener {
      * @param mText used for debugging
      * @param errorView1 used for debugging
      */
-    public Listener(Context context,  TextView mText, TextView errorView1) {
+    private Listener(Context context,  TextView mText, TextView errorView1) {
         this.context = context;
         this.mText = mText;
         this.errorView1 = errorView1;
@@ -55,6 +54,14 @@ class Listener implements RecognitionListener {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
+    public static Listener getListener(Context context, TextView mText, TextView errorView1){
+        if (single_instance == null){
+            single_instance = new Listener(context,  mText,  errorView1);
+        }
+
+        return single_instance;
+    }
+
 
     /**
      * restarts the speech recognition
@@ -62,13 +69,13 @@ class Listener implements RecognitionListener {
      */
     public void onError(int error)
     {
-        Log.d(TAG,  "error " +  error);
+
         String text = getErrorText(error);
-        errorView1.setText("error " + text);
+        //errorView1.setText("error " + text);
+        Log.d(TAG, "onError: "+ text);
         // set flag
         setIsRunning(false);
         // restarts the speech recognition
-
 
         if (!stopLitening) {
             recognize();
@@ -125,11 +132,11 @@ class Listener implements RecognitionListener {
                 if (entry.toLowerCase().contains("stop")) {
                     errorView1.setText("stopping Speech Recognizer");
                     Activity activity = (Activity) context;
-                    // close app
-                    stopLitening= true;
-                    speechRecognizer.cancel();
-                    stopSpeechRecognizer();
-                    //activity.finish();
+
+                    stop();
+//                    stopLitening= true;
+//                    speechRecognizer.cancel();
+//                    stopSpeechRecognizer();
                 }
             }
         }
@@ -140,8 +147,13 @@ class Listener implements RecognitionListener {
      *  starts the speech recognition
      */
     public synchronized void  recognize() {
-        errorView1.setBackgroundColor(activity.getResources().getColor(R.color.colorAccent));
+        if (stopLitening){
+            Log.d(TAG, "recognize_: "+ "isRunning: " +isRunning + "stopRunning: " + stopLitening);
+            return;
+        }
 
+        errorView1.setBackgroundColor(activity.getResources().getColor(R.color.colorAccent));
+        errorView1.setText("possessing");
         speechRecognizer.cancel();
 
         new Thread(new Runnable() {
@@ -159,17 +171,21 @@ class Listener implements RecognitionListener {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // set flag
-                        setIsRunning(true);
-
-                        errorView1.setBackgroundColor(activity.getResources().getColor(R.color.white));
-
-                        // configure speech recognition
-                        Intent intent = configureSpeechRecognition();
                         // starts speech recognition
                         if (!stopLitening) {
-                            speechRecognizer.startListening(intent);
-                            Log.d(TAG, "run: in recognize");
+                            Log.d(TAG, "recognize run: ");
+                            // set flag
+                            setIsRunning(true);
+                            errorView1.setBackgroundColor(activity.getResources().getColor(R.color.colorPrimary));
+                            errorView1.setText("Listening");
+                            // configure speech recognition
+                            Intent intent = configureSpeechRecognition();
+                            try {
+                                speechRecognizer.startListening(intent);
+                                Log.d(TAG, "run: in recognize");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });
@@ -179,7 +195,7 @@ class Listener implements RecognitionListener {
 
     /**
      *  configure speech recognition
-     * @return
+     * @return the intent configuration
      */
     private Intent configureSpeechRecognition() {
         String languagePref = "en-US";
@@ -288,7 +304,8 @@ class Listener implements RecognitionListener {
     }
     public void onRmsChanged(float rmsdB)
     {
-        Log.d(TAG, "onRmsChanged");
+        Log.d(TAG, "onRmsChanged: " + "isRunning: " + isRunning + "stopRunning: " + stopLitening);
+
     }
     public void onBufferReceived(byte[] buffer)
     {
@@ -304,4 +321,19 @@ class Listener implements RecognitionListener {
         Log.d(TAG, "onEvent " + eventType);
     }
 
+    public void start() {
+        setStopLitening(false);
+        recognize();
+        Log.d(TAG, "start: ");
+    }
+
+    public void stop(){
+        speechRecognizer.cancel();
+        setStopLitening(true);
+        setIsRunning(false);
+        errorView1.setBackgroundColor(activity.getResources().getColor(R.color.white));
+        errorView1.setText("");
+        Log.d(TAG, "stop: ");
+
+    }
 }

@@ -5,14 +5,12 @@ import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
@@ -70,11 +68,11 @@ public class StatisticsActivity extends AppCompatActivity {
     private void showSignInOptions() {
         startActivityForResult(                                         // Starts the FirebaseUI activity.
                 AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setIsSmartLockEnabled(false)
-                    .setAvailableProviders(providers)
-                    .setTheme(R.style.MyTheme)
-                    .build(), MY_REQUEST_CODE
+                        .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
+                        .setAvailableProviders(providers)
+                        .setTheme(R.style.MyTheme)
+                        .build(), MY_REQUEST_CODE
         );
     }
 
@@ -82,16 +80,13 @@ public class StatisticsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == MY_REQUEST_CODE) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this,
                         "Successfully signed in",
                         Toast.LENGTH_SHORT).show();
                 updateActivityUI();                                     // Calls function to update the rest of the UI.
             } else {
-                Toast.makeText(this, "Error response: "
-                        + response.getError().getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
@@ -114,7 +109,6 @@ public class StatisticsActivity extends AppCompatActivity {
         ArrayList<String> arrayOfDates = new ArrayList<>();
         Trip trip = new Trip(user.getUid());
         trip.retrieveAllTripsFromDB(user.getUid(), tripList -> {
-            Log.d("FirestoreData", "onSuccess list: " + tripList);
 
             // Populate the ListView with unique dates from the DB.
             for (int i = 0; i < tripList.size(); i++) {
