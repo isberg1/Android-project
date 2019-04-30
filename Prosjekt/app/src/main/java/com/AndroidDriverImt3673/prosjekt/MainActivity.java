@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
         cameraClass = new CameraClass(this, textureView);
 
         textureView.setSurfaceTextureListener(cameraClass.textureListener);
+        /*
         takePictureButton = findViewById(R.id.btn_takepicture);
         assert takePictureButton != null;
 
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements CallBack {
                 cameraClass.takePicture();
             }
         });
-
+        */
     }
 
     @Override
