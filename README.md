@@ -56,8 +56,16 @@ The speech recognition functionality is made by using the â€˜android.speech APIâ
 
 
 ### Mats
-I made the driving statistics functionality of the app where the driver can see graphs of their driving data. I also connected the app to Google Firebase to allow users to log into the app with Google and Facebook. I had to add a Facebook app to allow Firebase access to Facebook. The driving data is stored in Google Firestore database. 
+I made the statistics functionality of the app. Connected the app to Google Firebase for authentication with Google and Facebook and to store statistics data in the firestore database. To get facebook login to work I had to create a Facebook app and connect it to Firebase. 
 
-Only authenticated users are allowed to store data to the Firestore DB. When a new trip is startet in the app, data like how long the trips lasted, average speed, date, km's travelled is stored in the DB. The "Statistics" Activity gets all the data from Firestore and displays the date the trip was started. The user can then pick one ore more of these dates and display different kind of statistics in graphs. 
+When a new trip is started and if the user is authenticated the trip is saved to Firestore. Each user has its own Collection of trips in the database. The collection has multiple documents, where each document corresponds to one "trip" (when a user presses "Start" to the user presses "Stop" in the app). In these documents the following are stored:    
+ * Date
+ * Start time
+ * End time
+ * Km's travelled
+ * Time spent travelleing
 
-3 different "main" graphs are created for all the "trips" on the dates picked. The user can also pick a single date from a drop down menu that creates graphs for all "trips" on the chosen date. 
+Two activites where created to select and view statistics. One activity where the user can select which "dates" they want to see stats for. When one ore more "dates" are picked from the list, the seconds activity can be started that displayes bar graphs generated from the data in Firestore. The bar graphs show stats for each date picked. A date can have multiple "trips", and in this Activity the user can also pick a date to show stats for each "trip" on that specific date. 
+
+The hardest part was to make the bar graphs because I had to combine alot of data to create the "stats for dates". This had to be done in an completly different way for "stats for each trips".
+
