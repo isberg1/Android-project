@@ -1,9 +1,18 @@
 ﻿# Android-project - Android driving assistant
 
 ## App functionality
-What does the app do?
+The app shows your driving speed, the speed limit on the street you are driving and the streets name.    
+It uses the android location API to get the driving speed and Bing Maps API to get the speed limit and street name.    
+The Bing Maps API is also used to display trafic incidents in an area around the user.
 
-What featues does it have? 
+The app allows users to sign in with Google or Facebook. If the user signs in the app will record driving statistics and save them to the cloud.    
+These statistics can then be viewed in the app in the form of bar graphs.    
+For the authentication the app uses Google Firebase and Google Firestore for storing data in the database. 
+
+The app aslo supports voice commands to take a picture using the camera.    
+To do this voice must first be activtated, when the voice command "picture" is said, a picture is taken and saved to the phones gallery.      
+It uses the camera2 API to take the picture and android.speech API to listen to voice commands.
+
 
 ### App layout:
 ![](app.png?raw=true)
