@@ -487,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         String strUnits = "km/h";
 
         TextView txtCurrentSpeed = this.findViewById(R.id.drivingSpeed);
-        txtCurrentSpeed.setText(strCurrentSpeed + " " + strUnits);
+        txtCurrentSpeed.setText(strCurrentSpeed);
     }
 
 
