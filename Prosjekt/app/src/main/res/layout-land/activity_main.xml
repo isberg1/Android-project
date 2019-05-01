@@ -8,12 +8,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="464dp"
-        android:layout_height="192dp"
+        android:layout_width="419dp"
+        android:layout_height="0dp"
         android:layout_gravity="bottom"
         android:background="#DF000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="@+id/texture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,9 +20,7 @@
         android:id="@+id/texture"
         android:layout_width="165dp"
         android:layout_height="200dp"
-        android:layout_gravity="bottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.257"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,10 +28,10 @@
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginTop="8dp"
         android:text="Driving Speed"
-        android:textSize="22dp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/texture" />
 
@@ -42,10 +39,10 @@
         android:id="@+id/textView3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="324dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="128dp"
         android:text="Speed Limit  "
-        android:textSize="22dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/texture" />
 
@@ -71,21 +68,20 @@
         android:id="@+id/textview_street_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
         android:text="Street Name"
-        android:textSize="20sp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.289"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/drivingSpeed"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:text="62"
-        android:textSize="36dp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="@+id/textView2"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -93,58 +89,53 @@
         android:id="@+id/speedLimit"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginTop="4dp"
         android:text="60"
-        android:textSize="36dp"
+        android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Button
         android:id="@+id/btn_speak"
-        android:layout_width="267dp"
-        android:layout_height="129dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="464dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
         android:background="@drawable/button_speak"
         android:onClick="buttonClick"
-        app:layout_constraintBottom_toTopOf="@+id/btn_show_stats"
-        app:layout_constraintEnd_toStartOf="@+id/button_start"
-        app:layout_constraintHorizontal_bias="0.003"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/texture"
+        app:layout_constraintEnd_toStartOf="@+id/btn_show_stats"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/button_start" />
 
     <Button
         android:id="@+id/button_start"
-        android:layout_width="268dp"
-        android:layout_height="134dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="92dp"
-        android:layout_marginBottom="8dp"
         android:background="@drawable/button_start"
-        app:layout_constraintBottom_toTopOf="@+id/btn_show_stats"
-        app:layout_constraintTop_toTopOf="@+id/btnGPS"
-        app:layout_constraintVertical_bias="0.015"
-        tools:layout_editor_absoluteX="463dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btn_speak"
+        app:layout_constraintEnd_toStartOf="@+id/btnGPS"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnGPS"
-        android:layout_width="267dp"
-        android:layout_height="94dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="268dp"
         android:background="@drawable/button_gps"
         android:onClick="GoToGPS"
         app:layout_constraintBottom_toTopOf="@+id/btn_show_stats"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/button_start" />
+        app:layout_constraintStart_toEndOf="@+id/button_start"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_show_stats"
-        android:layout_width="268dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -155,10 +146,10 @@
         android:textColor="#C6FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/texture"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/btn_speak"
+        app:layout_constraintTop_toBottomOf="@+id/btnGPS" />
 
     <TextView
         android:id="@+id/errorView1"
