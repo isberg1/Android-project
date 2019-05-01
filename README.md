@@ -55,3 +55,9 @@ The speech recognition functionality is made by using the â€˜android.speech APIâ
 * To use the speech recognizer, you must have it installed on the phone and to use it local, you have to have a language pack installed. My phone only has access to the English language pack. So, I could only make voice commands in English.
 
 
+### Mats
+I made the driving statistics functionality of the app where the driver can see graphs of their driving data. I also connected the app to Google Firebase to allow users to log into the app with Google and Facebook. I had to add a Facebook app to allow Firebase access to Facebook. The driving data is stored in Google Firestore database. 
+
+Only authenticated users are allowed to store data to the Firestore DB. When a new trip is startet in the app, data like how long the trips lasted, average speed, date, km's travelled is stored in the DB. The "Statistics" Activity gets all the data from Firestore and displays the date the trip was started. The user can then pick one ore more of these dates and display different kind of statistics in graphs. 
+
+3 different "main" graphs are created for all the "trips" on the dates picked. The user can also pick a single date from a drop down menu that creates graphs for all "trips" on the chosen date. 
