@@ -61,6 +61,7 @@ For the most advanced feature (detect pedestrians) we will use the phones camera
 ## Project report
 In this project we have made an android driving assistant app. It can find the street you are one, its speed limit and your current driving speed. It is able to record driving statistics and backing them up to Googles Firebase system. The app can also access online traffic rapports and display them. Finally the app is capable of listening for a voice command that’s. and upon speech recognition activation, and the command ‘picture’ will use the camera2 API to take a picture.
 
+
 ### Alexander Jakobsen
 I made a speech recognition functionality which makes it possible to take a picture by voice command. To do this, I had to interact with the camera directly, as I was unable to use any other app to do this in the way I wanted it to be done. E.g. take a picture without leaving the activity and pushing a button. 
 The options for doing this was the ‘camera’ and ‘camera2’ API. According to my study the ‘camera API’ was simple to use, but it had been deprecated since Android API 21. So, I did not want to use it. The ‘camera2 API’ on the other hand was much more difficult to use. But I did eventually manage to get it working. 
@@ -71,7 +72,20 @@ The speech recognition functionality is made by using the ‘android.speech API�
 
 * At activation and deactivation, the speech recognizer plays a beep sound. This would be extremely irritating for the user to constantly listen to. I could not find any way to deactivate it by configuration. Some entrees on stack Overflow claimed it wasn’t possible, because google made It this way so the user would be aware that sound was being recorded. So, I had to turn off the media sound at the start of the activity and turn it back on again afterwards. 
 
-* To use the speech recognizer, you must have it installed on the phone and to use it local, you have to have a language pack installed. My phone only has access to the English language pack. So, I could only make voice commands in English.
+* To use the speech recognizer, you must have it installed on the phone and to use it local, you must have a language pack installed. My phone only has access to the English language pack. So, I could only make voice commands in English.
+
+I also met some difficulties when using the camera2 API. I found several different examples on the internet. But none of them were any great. They worked for their own use case. But as soon as I tried to do anything else. Like rotating the screen or exiting unexpectantly. They stop working.  In the end we had to lock the activity orientation to vertical to ensure everything would work as desired. 
+
+For the detect pedestrians in front of the camera. I was unable to implement it. But I started by tying to learn real time object detection for android, by using some demo projects I found 
+https://www.youtube.com/watch?v=EhMrf4G5Wf0&feature=youtu.be   
+https://github.com/natanielruiz/android-yolo 
+
+but it did not work. Later I Found a google demo project to demonstrate how to user TensorFlow with camera, but it is very complicated. If I am to use it, it would primarily be to copy paste googles code. Possibly to make my own protobuffer object model. 
+Google demo project url: 
+https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/android  
+
+I eventually determined that this project was to advanced for me to use. Besides the camera2 API it used a lot of image processing I did not understand. I allso watched a lot of videoes about tensorflow form youtube channel :
+https://www.youtube.com/channel/UCWN3xxRkmTPmbKwht9FuE5A/featured 
 
 
 ### Mats
