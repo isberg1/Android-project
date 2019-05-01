@@ -162,7 +162,7 @@ public class CameraClass {
         }
     };
 
-    //--
+    // informs the user that a picture was saved to the file system
     final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
         /**
          * informs the user where the image file was stored and creates a camera preview
@@ -311,7 +311,9 @@ public class CameraClass {
     }
 
 
-
+    /**
+     * helper-function that configures camera settings
+     */
     public CaptureRequest.Builder captureRequestBuilder(ImageReader reader) throws CameraAccessException {
         // get the android devices orientation
         int rotation =((Activity)context).getWindowManager().getDefaultDisplay().getRotation();

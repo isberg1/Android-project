@@ -20,6 +20,7 @@ import java.util.ArrayList;
 class Listener implements RecognitionListener {
     private static final String TAG = "Listener";
 
+    // used for Singleton pattern
     private static Listener single_instance = null;
 
     private boolean isRunning = false;
@@ -36,10 +37,14 @@ class Listener implements RecognitionListener {
     private Integer original_volume_level;
     private AudioManager audioManager;
 
+    /**
+     * flag used to stop the speech recogniser form running more times
+     * @param bool
+     */
     public void setStopLitening(boolean bool){ stopLitening = bool; }
 
     /**
-     * constructor
+     * privat constructor
      * @param context of the activity that called it
      * @param mText used for debugging
      * @param errorView1 used for debugging
@@ -54,6 +59,13 @@ class Listener implements RecognitionListener {
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
+    /**
+     * used for ensuring only a single instace of the speech recognizer exists at one time
+     * @param context for constructor
+     * @param mText for constructor
+     * @param errorView1 for constructor
+     * @returnf singleton of speech recognizer object
+     */
     public static Listener getListener(Context context, TextView mText, TextView errorView1){
         if (single_instance == null){
             single_instance = new Listener(context,  mText,  errorView1);
@@ -143,9 +155,10 @@ class Listener implements RecognitionListener {
             Log.d(TAG, "recognize_: "+ "isRunning: " +isRunning + "stopRunning: " + stopLitening);
             return;
         }
-
+        // informs the user that the service is not ready
         errorView1.setBackgroundColor(activity.getResources().getColor(R.color.colorAccent));
         errorView1.setText("possessing");
+        // ensure last run is finished
         speechRecognizer.cancel();
 
         new Thread(new Runnable() {
@@ -168,6 +181,7 @@ class Listener implements RecognitionListener {
                             Log.d(TAG, "recognize run: ");
                             // set flag
                             setIsRunning(true);
+                            // informs the user that the service is ready
                             errorView1.setBackgroundColor(activity.getResources().getColor(R.color.colorPrimary));
                             errorView1.setText("Listening");
                             // configure speech recognition
@@ -266,20 +280,38 @@ class Listener implements RecognitionListener {
         isRunning = bool;
     }
 
+    /**
+     * prevents irritating start and stopp beeping sound from speech recognizer
+     * by disabling media sound
+     */
     public void startSpeechRecognizer() {
         original_volume_level = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
     }
 
+
+    /**
+     * set media sound back to its original value by disabling media sound
+     */
     public void stopSpeechRecognizer() {
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, original_volume_level, 0);
-        speechRecognizer.stopListening();
+        if (speechRecognizer != null){
+            speechRecognizer.stopListening();
+        }
+
     }
 
+    /**
+     * destroys SpeechRecognizer object
+     */
     public void destroySpeechRecognizer() {
         speechRecognizer.destroy();
     }
+
+    /**
+     * listen for this app
+     */
     public void setListener() {
         speechRecognizer.setRecognitionListener(this);
     }
@@ -313,19 +345,25 @@ class Listener implements RecognitionListener {
         Log.d(TAG, "onEvent " + eventType);
     }
 
+    /**
+     * starts speech recognizer service
+     */
     public void start() {
         setStopLitening(false);
         recognize();
         Log.d(TAG, "start: ");
     }
 
+    /**
+     * stops speech recognizer service
+     */
     public void stop(){
         speechRecognizer.cancel();
         setStopLitening(true);
         setIsRunning(false);
+        // resets some textView fields back to default values
         errorView1.setBackgroundColor(activity.getResources().getColor(R.color.white));
         errorView1.setText("");
         Log.d(TAG, "stop: ");
-
     }
 }
