@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
     public double tripKMTravelled;
     public String tripDate;
     private boolean tripActive = false;
-    private TextView drivingSpeed;
+    private TextView speedLim;
     private TextView streetName;
 
 
@@ -203,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
             case 1: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startApp();
+                    sendAPI();
                 } else {
                     return;
                 }
@@ -430,7 +431,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
 
     public void sendAPI(){
-        drivingSpeed = findViewById(R.id.drivingSpeed);
+        speedLim = findViewById(R.id.speedLimit);
         //streetName = findViewById(R.id.textview_street_name);
         String url = "https://dev.virtualearth.net/REST/v1/Routes/SnapToRoad?points=" + lati + "," + longi + "&IncludeSpeedLimit=true&speedUnit=KPH&key=AhloF-tCKXkUy1HBgDXp9xljOoebG6BzAAJz0xu8xtDbojMFFIxew7DokDbp5nfe";
 
@@ -446,13 +447,15 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
                         for (int j = 0; j< jsonArray1.length(); j++) {
                             JSONObject jsonObject1 = jsonArray1.getJSONObject(j);
                             JSONArray jsonArray2 = jsonObject1.getJSONArray("snappedPoints");
-                            for (int k = 0; k< jsonArray2.length(); k++) {
+                            for (int k = 0; k < jsonArray2.length(); k++) {
+
                                 JSONObject jsonObject2 = jsonArray2.getJSONObject(k);
                                 String speedLimit = jsonObject2.getString("speedLimit");
                                 String speedUnit = jsonObject2.getString("speedUnit");
 
+
                                 String name = jsonObject2.getString("name");
-                                drivingSpeed.setText(speedLimit);
+                                speedLim.setText(speedLimit);
                                 //streetName.setText(name);
 
                             }
@@ -478,7 +481,8 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
         if(location != null)
         {
-            int speed=(int) (location.getSpeed()*(3600/1000));
+           // int speed=(int) (location.getSpeed()*(3600/1000));
+            float speed = location.getSpeed();
             CurrentSpeed = speed;
 
         }
@@ -510,6 +514,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
             this.updateSpeed(myLocation);
             longi = location.getLongitude();
             lati = location.getLatitude();
+            sendAPI();
         }
     }
 
