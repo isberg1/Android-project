@@ -37,17 +37,16 @@ public class IncidentsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rcrView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         que = Volley.newRequestQueue(this);
-        sendAPI();
         Intent i = this.getIntent();
         longi = i.getDoubleExtra(GPSActivity.SEND_LONG, 0);
         lati = i.getDoubleExtra(GPSActivity.SEND_LAT, 0);
-
+        sendAPI();
 
     }
 
 
     public void sendAPI(){
-        String url = "https://dev.virtualearth.net/REST/v1/Traffic/Incidents/60,11,61,12?key=AhloF-tCKXkUy1HBgDXp9xljOoebG6BzAAJz0xu8xtDbojMFFIxew7DokDbp5nfe\n";
+        String url = "https://dev.virtualearth.net/REST/v1/Traffic/Incidents/" +  (int)lati + "," + (int)longi + "," + (int)(lati +1) + "," + (int)(longi +1) + "?key=AhloF-tCKXkUy1HBgDXp9xljOoebG6BzAAJz0xu8xtDbojMFFIxew7DokDbp5nfe\n";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>(){
             @Override

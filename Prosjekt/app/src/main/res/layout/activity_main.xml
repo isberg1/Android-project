@@ -127,7 +127,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/button_gps"
-        android:onClick="GoToGPS"
+        android:onClick="GoToIncident"
         app:layout_constraintBottom_toTopOf="@+id/btn_show_stats"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/button_start" />
