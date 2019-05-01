@@ -5,7 +5,8 @@ What does the app do?
 
 What featues does it have? 
 
-Add picture
+### App layout:
+![](app.png?raw=true)
 
 *** 
 ## Original Idea
