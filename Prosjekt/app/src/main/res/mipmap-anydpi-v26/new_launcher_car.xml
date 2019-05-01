@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@color/background_new_launcher_car"/>
-    <foreground android:drawable="@drawable/foreground_new_launcher_car"/>
-</adaptive-icon>
