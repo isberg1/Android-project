@@ -416,6 +416,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
             trip.setTotalTime(trip.getEndTime() - trip.getStartTime());
             trip.saveTripToDB();
+            Toast.makeText(this, "Trip successfully saved", Toast.LENGTH_LONG).show();
             btnTrip.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -494,7 +495,9 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
         String strUnits = "km/h";
 
+        // Removes decimal values and leading 0s in string.
         String roundedCurrentSpeed = strCurrentSpeed.split("\\.")[0];
+        roundedCurrentSpeed = roundedCurrentSpeed.replaceFirst("^0+(?!$)", "");
 
         TextView txtCurrentSpeed = this.findViewById(R.id.drivingSpeed);
         txtCurrentSpeed.setText(roundedCurrentSpeed);
