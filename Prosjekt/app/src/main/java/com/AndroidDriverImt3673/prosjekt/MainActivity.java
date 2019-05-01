@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
@@ -332,12 +333,16 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
         tripDate = dateFormat.format(new Date());
 
+        btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_stop));
+
         if (tripActive) {
             btnTrip.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     endTrip(tripStartLatitude, tripStartLongitude, tripStartTime);
                     tripActive = false;
+
+                    btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_start));
                 }
             });
         }
@@ -410,7 +415,6 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
             trip.setTotalTime(trip.getEndTime() - trip.getStartTime());
             trip.saveTripToDB();
-            Toast.makeText(this, "Trip successfully saved", Toast.LENGTH_LONG).show();
             btnTrip.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -486,8 +490,10 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
         String strUnits = "km/h";
 
+        String roundedCurrentSpeed = strCurrentSpeed.split("\\.")[0];
+
         TextView txtCurrentSpeed = this.findViewById(R.id.drivingSpeed);
-        txtCurrentSpeed.setText(strCurrentSpeed);
+        txtCurrentSpeed.setText(roundedCurrentSpeed);
     }
 
 
