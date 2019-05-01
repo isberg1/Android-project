@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         setContentView(R.layout.activity_main);
         textureView = findViewById(R.id.texture);
 
-        if (!isOrientationPortrait(this)){
+        if (!isOrientationPortrait(this)) {
             textureView.setRotation(90);
         }
 
@@ -94,8 +94,22 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         mText = (TextView) findViewById(R.id.mText);
         errorView1 = findViewById(R.id.errorView1);
         listener = Listener.getListener(this, mText, errorView1);
-        checkPermissions();
 
+
+        // The request code used in ActivityCompat.requestPermissions()
+// and returned in the Activity's onRequestPermissionsResult()
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
+                android.Manifest.permission.RECORD_AUDIO,
+                android.Manifest.permission.WRITE_CONTACTS,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.CAMERA
+        };
+
+        if (!hasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
 
         assert textureView != null;
         cameraClass = new CameraClass(this, textureView);
@@ -103,24 +117,33 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         textureView.setSurfaceTextureListener(cameraClass.textureListener);
 
 
-
         btnTrip = findViewById(R.id.button_start);
-        btnTrip.setOnClickListener(new View.OnClickListener(){
+        btnTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startTrip();
+                if (tripActive == false) {
+                    startTrip();
+                } else {
+                    endTrip(tripStartLatitude, tripStartLongitude, tripStartTime);
+                    tripActive = false;
+
+                    btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_start));
+                }
+
             }
         });
-      //  Button btnAPI = findViewById(R.id.btnAPI);
+        //  Button btnAPI = findViewById(R.id.btnAPI);
         que = Volley.newRequestQueue(this);
         //btnAPI.setOnClickListener(new View.OnClickListener(){
-          //  @Override
-           // public void onClick(View v) {
-             //   sendAPI();
-            //}
+        //  @Override
+        // public void onClick(View v) {
+        //   sendAPI();
+        //}
         //});
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             return;
         } else {
             startApp();
@@ -131,7 +154,19 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
     }
 
-    private void checkPermissions() {
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+   /* private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -148,8 +183,15 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
                         527);
             }
         }
-    }
 
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+
+    }
+*/
 
     /**
      * start and stops the voice recognition
@@ -271,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
     public void GoToIncident(View view) {
         listener.stop();
         Bundle bundle = new Bundle();
-        bundle.putDouble(SEND_LONG ,longi);
+        bundle.putDouble(SEND_LONG, longi);
         bundle.putDouble(SEND_LAT, lati);
         final Intent startIncident = new Intent(MainActivity.this, IncidentsActivity.class);
         startIncident.putExtras(bundle);
@@ -290,8 +332,8 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
      * @param context
      * @return true if Portrait, false if not
      */
-    public boolean isOrientationPortrait(Context context){
-        final int screenOrientation = ((WindowManager)  context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
+    public boolean isOrientationPortrait(Context context) {
+        final int screenOrientation = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation();
         switch (screenOrientation) {
             case Surface.ROTATION_0:
                 return true;
@@ -314,7 +356,6 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
     }
 
 
-
     public void startTrip() {
         tripActive = true;
         tripStartLatitude = lati;
@@ -326,24 +367,48 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
         btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_stop));
 
-        if (tripActive) {
-            btnTrip.setOnClickListener(new View.OnClickListener(){
+        /*if (tripActive) {
+            btnTrip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     endTrip(tripStartLatitude, tripStartLongitude, tripStartTime);
                     tripActive = false;
 
                     btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_start));
                 }
             });
-        }
+        }*/
     }
 
+
     public void endTrip(double startLat, double startLong, long startTime) {
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        tripEndLongitude = location.getLongitude();
-        tripEndLatitude = location.getLatitude();
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            int PERMISSION_ALL = 1;
+            String[] PERMISSIONS = {
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            };
+
+            if (!hasPermissions(this, PERMISSIONS)) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+            }
+
+
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        try {
+            tripEndLongitude = location.getLongitude();
+            tripEndLatitude = location.getLatitude();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         tripEndTime = System.currentTimeMillis() / 1000L;
 
         // FOR PRESENTATION PURPOSES, DO NOT REMOVE!
