@@ -36,7 +36,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         mText = (TextView) findViewById(R.id.mText);
         errorView1 = findViewById(R.id.errorView1);
         listener = Listener.getListener(this, mText, errorView1);
-        chechPermissions();
+        checkPermissions();
 
 
         assert textureView != null;
@@ -132,23 +131,18 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
     }
 
-    private void chechPermissions() {
+    private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
-
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.RECORD_AUDIO)) {
-
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-
             } else {
-
                 // No explanation needed, we can request the permission.
-
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.RECORD_AUDIO},
                         527);
@@ -161,10 +155,11 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
      * start and stops the voice recognition
      * @param view the button that was pushed
      */
-    public void buttonClick(View view) {
-        Log.d(TAG, "buttonClick: " + listener.getIsRunning());
+    public void startListeningBtn(View view) {
+        Log.d(TAG, "startListeningBtn: " + listener.getIsRunning());
         if (listener.getIsRunning()) {
             listener.stop();
+            mText.setText("");
 
         } else {
             listener.start();
@@ -186,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
                     // contacts-related task you need to do.
 
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -259,6 +253,8 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         super.onDestroy();
         listener.destroySpeechRecognizer();
         listener = null;
+        mText.setText("");
+        errorView1.setText("");
         Log.d(TAG, "onDestroy: ");
     }
 

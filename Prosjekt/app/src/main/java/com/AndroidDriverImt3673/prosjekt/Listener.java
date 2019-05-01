@@ -121,12 +121,6 @@ class Listener implements RecognitionListener {
                 takePicture.take1Picture();
                 Log.d(TAG, "processResult: take 1 picture");
 
-            } else if (entry.toLowerCase().contains("record")) {
-                if (entry.toLowerCase().contains("start")) {
-                    errorView1.setText("it contains start record");
-                } else if (entry.toLowerCase().contains("stop")) {
-                    errorView1.setText("it contains stop record");
-                }
             } else if (entry.toLowerCase().contains("listening")) {
                 // close app
                 if (entry.toLowerCase().contains("stop")) {
@@ -134,9 +128,7 @@ class Listener implements RecognitionListener {
                     Activity activity = (Activity) context;
 
                     stop();
-//                    stopLitening= true;
-//                    speechRecognizer.cancel();
-//                    stopSpeechRecognizer();
+                    mText.setText("");
                 }
             }
         }

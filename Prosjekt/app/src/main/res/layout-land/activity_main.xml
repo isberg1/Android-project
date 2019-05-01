@@ -102,7 +102,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/button_speak"
-        android:onClick="buttonClick"
+        android:onClick="startListeningBtn"
         app:layout_constraintBottom_toBottomOf="@+id/texture"
         app:layout_constraintEnd_toStartOf="@+id/btn_show_stats"
         app:layout_constraintStart_toEndOf="@+id/imageView"

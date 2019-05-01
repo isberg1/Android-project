@@ -103,7 +103,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/button_speak_night"
-        android:onClick="buttonClick"
+        android:onClick="startListeningBtn"
         app:layout_constraintBottom_toTopOf="@+id/btn_show_stats"
         app:layout_constraintEnd_toStartOf="@+id/button_start"
         app:layout_constraintHorizontal_bias="1.0"
