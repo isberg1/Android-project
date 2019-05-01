@@ -9,8 +9,11 @@ The app allows users to sign in with Google or Facebook. If the user signs in th
 These statistics can then be viewed in the app in the form of bar graphs.    
 For the authentication the app uses Google Firebase and Google Firestore for storing data in the database. 
 
-The app aslo supports voice commands to take a picture using the camera.    
-To do this voice must first be activtated, when the voice command "picture" is said, a picture is taken and saved to the phones gallery.      
+The app aslo supports voice commands to take a picture using the camera.  
+To do this voice must first be activtated, when the voice command "picture" is said, a picture is taken and saved to the phones gallery. 
+You may also use the command 'stop listening' in order to stop the speech recognition service.
+
+
 It uses the camera2 API to take the picture and android.speech API to listen to voice commands.
 
 
