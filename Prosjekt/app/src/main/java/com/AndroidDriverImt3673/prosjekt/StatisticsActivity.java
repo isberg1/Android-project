@@ -105,6 +105,7 @@ public class StatisticsActivity extends AppCompatActivity {
         txtUserName.setText("Signed in as " + userName);                // Show username in activity.
         signOutBtn.setEnabled(true);                                    // Enables the "sign out" button.
 
+
         // Retrieves all data from Firestore for the current user, but only uses the dates.
         ArrayList<String> arrayOfDates = new ArrayList<>();
         Trip trip = new Trip(user.getUid());
