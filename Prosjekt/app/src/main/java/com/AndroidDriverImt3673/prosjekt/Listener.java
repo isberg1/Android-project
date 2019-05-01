@@ -97,7 +97,7 @@ class Listener implements RecognitionListener {
             Log.d(TAG, "result " + data.get(i));
             str += data.get(i) +  " , ";
         }
-        mText.setText("results: "+str);
+        mText.setText(" " + str);
         // parse result
         processResult(data);
         // set flag
