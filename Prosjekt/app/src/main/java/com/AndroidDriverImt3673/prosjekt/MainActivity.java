@@ -46,13 +46,10 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
     private TextView mText;
     private TextView errorView1;
-    //private SpeechRecognizer speechRecognizer;
     private Listener listener;
     private Button speakButton;
     boolean isActivated = false;
 
-
-    private Button takePictureButton;
     private TextureView textureView;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private CameraClass cameraClass;
@@ -96,12 +93,10 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         listener = Listener.getListener(this, mText, errorView1);
 
 
-        // The request code used in ActivityCompat.requestPermissions()
-// and returned in the Activity's onRequestPermissionsResult()
+        // get permissions
         int PERMISSION_ALL = 1;
         String[] PERMISSIONS = {
                 android.Manifest.permission.RECORD_AUDIO,
-                android.Manifest.permission.WRITE_CONTACTS,
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
                 android.Manifest.permission.CAMERA
@@ -112,13 +107,15 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         }
 
         assert textureView != null;
+        // gain access to the camera
         cameraClass = new CameraClass(this, textureView);
-
+        // configure camera preview display surface
         textureView.setSurfaceTextureListener(cameraClass.textureListener);
-
-
+        // start/stop button for recording driving statistics
         btnTrip = findViewById(R.id.button_start);
         btnTrip.setOnClickListener(new View.OnClickListener() {
+            // button listener, if not activated then activate. and
+            // if activated then deactivate
             @Override
             public void onClick(View v) {
                 if (tripActive == false) {
@@ -126,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
                 } else {
                     endTrip(tripStartLatitude, tripStartLongitude, tripStartTime);
                     tripActive = false;
-
                     btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_start));
                 }
 
@@ -134,12 +130,7 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         });
         //  Button btnAPI = findViewById(R.id.btnAPI);
         que = Volley.newRequestQueue(this);
-        //btnAPI.setOnClickListener(new View.OnClickListener(){
-        //  @Override
-        // public void onClick(View v) {
-        //   sendAPI();
-        //}
-        //});
+        // permissioing check before staring GPS reliant features
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -154,6 +145,12 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
     }
 
+    /**
+     * checks is a set of permissions has been granted
+     * @param context  the activity context that needs permissions
+     * @param permissions the string array of different permissions
+     * @return returns false if all permissions han not been granted
+     */
     public static boolean hasPermissions(Context context, String... permissions) {
         if (context != null && permissions != null) {
             for (String permission : permissions) {
@@ -166,32 +163,6 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
     }
 
 
-   /* private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.RECORD_AUDIO)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.RECORD_AUDIO},
-                        527);
-            }
-        }
-
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        }
-
-    }
-*/
 
     /**
      * start and stops the voice recognition
@@ -209,7 +180,12 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
     }
 
-
+    /**
+     * callback functions used for checking result of permissions requests
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -244,7 +220,9 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         }
     }
 
-
+    /**
+     * Speech Recognizer components has to be started in a specific order
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -254,7 +232,10 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         listener.startSpeechRecognizer();
     }
 
-
+    /**
+     * Speech Recognizer components has to be started in a specific order
+     * starts a background thread to handle camera operations
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -263,17 +244,17 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
             listener.recognize();
         }
 
-
         cameraClass.startBackgroundThread();
         if (textureView.isAvailable()) {
             cameraClass.openCamera();
         } else {
             textureView.setSurfaceTextureListener(cameraClass.textureListener);
         }
-
-
     }
 
+    /**
+     * stops Speech Recognizer components, and camera background threads
+     */
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
@@ -281,8 +262,6 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         cameraClass.stopBackgroundThread();
         listener.stopSpeechRecognizer();
         super.onPause();
-
-
     }
 
     @Override
@@ -290,6 +269,9 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         super.onStop();
     }
 
+    /**
+     * destroys Speech Recognizer and sets som textViews to default values
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -310,6 +292,10 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         cameraClass.takePicture();
     }
 
+    /**
+     * takes the user to a activity displaying traffic reports
+     * @param view a button
+     */
     public void GoToIncident(View view) {
         listener.stop();
         Bundle bundle = new Bundle();
@@ -320,6 +306,10 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         startActivity(startIncident);
     }
 
+    /**
+     * takes the user to a activity displaying driving statistics
+     * @param view a button
+     */
     public void GoToStats(View view) {
         listener.stop();
         Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
@@ -355,7 +345,9 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         moveTaskToBack(true);
     }
 
-
+    /**
+     * starts recording driving information
+     */
     public void startTrip() {
         tripActive = true;
         tripStartLatitude = lati;
@@ -367,21 +359,14 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
 
         btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_stop));
 
-        /*if (tripActive) {
-            btnTrip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    endTrip(tripStartLatitude, tripStartLongitude, tripStartTime);
-                    tripActive = false;
-
-                    btnTrip.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.button_start));
-                }
-            });
-        }*/
     }
 
-
+    /**
+     * stops recording driving information
+     * @param startLat
+     * @param startLong
+     * @param startTime
+     */
     public void endTrip(double startLat, double startLong, long startTime) {
 
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -451,6 +436,14 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         que.add(request2);
     }
 
+    /**
+     * saves driving data to Googles firebase backend
+     * @param tripDate
+     * @param tripStartTime
+     * @param tripEndTime
+     * @param tripKMTravelled
+     * @param tripAverageSpeed
+     */
     public void saveToFireBase(String tripDate, long tripStartTime, long tripEndTime, double tripKMTravelled, double tripAverageSpeed) {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -472,12 +465,12 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
             trip.setTotalTime(trip.getEndTime() - trip.getStartTime());
             trip.saveTripToDB();
             Toast.makeText(this, "Trip successfully saved", Toast.LENGTH_LONG).show();
-            btnTrip.setOnClickListener(new View.OnClickListener(){
+            /*btnTrip.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                     startTrip();
                 }
-            });
+            });*/
         }
         else {
             return;
@@ -540,7 +533,6 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
            // int speed=(int) (location.getSpeed()*(3600/1000));
             float speed = location.getSpeed();
             CurrentSpeed = speed;
-
         }
 
         Formatter fmt = new Formatter(new StringBuilder());
