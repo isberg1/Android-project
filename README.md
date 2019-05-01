@@ -56,16 +56,16 @@ The speech recognition functionality is made by using the â€˜android.speech APIâ
 
 
 ### Mats
-I made the statistics functionality of the app. Connected the app to Google Firebase for authentication with Google and Facebook and to store statistics data in the firestore database. To get facebook login to work I had to create a Facebook app and connect it to Firebase. 
+I made the statistics functionality of the app. Connected the app to Google Firebase for authentication with Google and Facebook and to store statistics data in the Firestore database. To get Facebook login to work I had to create a Facebook app and connect it to Firebase. 
 
 When a new trip is started and if the user is authenticated the trip is saved to Firestore. Each user has its own Collection of trips in the database. The collection has multiple documents, where each document corresponds to one "trip" (when a user presses "Start" to the user presses "Stop" in the app). In these documents the following are stored:    
  * Date
  * Start time
  * End time
  * Km's travelled
- * Time spent travelleing
+ * Time spent travelling
 
-Two activites where created to select and view statistics. One activity where the user can select which "dates" they want to see stats for. When one ore more "dates" are picked from the list, the seconds activity can be started that displayes bar graphs generated from the data in Firestore. The bar graphs show stats for each date picked. A date can have multiple "trips", and in this Activity the user can also pick a date to show stats for each "trip" on that specific date. 
+Two activities where created to select and view statistics. One activity where the user can select which "dates" they want to see stats for. When one or more "dates" are picked from the list, the seconds activity can be started that displays bar graphs generated from the data in Firestore. The bar graphs show stats for each date picked. A date can have multiple "trips", and in this Activity the user can also pick a date to show stats for each "trip" on that specific date. 
 
-The hardest part was to make the bar graphs because I had to combine alot of data to create the "stats for dates". This had to be done in an completly different way for "stats for each trips".
+The hardest part was to make the bar graphs because I had to combine a lot of data to create the "stats for dates". This had to be done in a completely different way for "stats for each trips".
 
