@@ -3,7 +3,7 @@
 ## App functionality
 The app shows your driving speed, the speed limit on the street you are driving and the streets name.    
 It uses the android location API to get the driving speed and Bing Maps API to get the speed limit and street name.    
-The Bing Maps API is also used to display trafic incidents in an area around the user.
+The Bing Maps API is also used to display traffic incidents in an area around the user.
 
 The app allows users to sign in with Google or Facebook. If the user signs in the app will record driving statistics and save them to the cloud.    
 These statistics can then be viewed in the app in the form of bar graphs.    
