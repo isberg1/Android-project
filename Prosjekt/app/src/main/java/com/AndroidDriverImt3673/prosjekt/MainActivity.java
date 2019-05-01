@@ -95,45 +95,14 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         mText = (TextView) findViewById(R.id.mText);
         errorView1 = findViewById(R.id.errorView1);
         listener = Listener.getListener(this, mText, errorView1);
-//        listener = new Listener(this, mText, errorView1);
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.RECORD_AUDIO)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.RECORD_AUDIO},
-                        527);
-            }
-        }
+        chechPermissions();
 
 
         assert textureView != null;
         cameraClass = new CameraClass(this, textureView);
 
         textureView.setSurfaceTextureListener(cameraClass.textureListener);
-        /*
-        takePictureButton = findViewById(R.id.btn_takepicture);
-        assert takePictureButton != null;
 
-        takePictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cameraClass.takePicture();
-            }
-        });
-        */
 
 
         btnTrip = findViewById(R.id.button_start);
@@ -161,6 +130,30 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
         this.updateSpeed(null);
 
 
+    }
+
+    private void chechPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.RECORD_AUDIO)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.RECORD_AUDIO},
+                        527);
+            }
+        }
     }
 
 
@@ -201,7 +194,8 @@ public class MainActivity extends AppCompatActivity implements CallBack, GPSList
             }
 
             case 1: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startApp();
                     sendAPI();
                 } else {
